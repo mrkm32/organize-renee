@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Renee Care & Financial Organization Hub</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printableSettlement, #printableSettlement * { visibility: visible; }
+      #printableSettlement { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      .no-print { display: none !important; }
+    }
+    .tab-active {
+      border-bottom: 2px solid #16a34a;
+      color: #15803d;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-200">
+
+  <!-- ================= TOP NAVIGATION / HEADER ================= -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md shadow-emerald-600/20">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold text-slate-900 leading-tight">Renee Family Care Hub</h1>
+            <p class="text-xs text-slate-500">Estate, Bills & Reverse Mortgage Reimbursement</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <span id="vaultStatusBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+            <span class="w-1.5 h-1.5 mr-1.5 bg-amber-500 rounded-full animate-pulse"></span>
+            Locked
+          </span>
+
+          <button id="quickSheetsExportBtn" onclick="exportToGoogleSheetsCSV()" class="hidden sm:inline-flex items-center px-3 py-1.5 border border-slate-300 text-xs font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition">
+            <svg class="w-4 h-4 mr-1.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Export to Sheets
+          </button>
+
+          <button id="lockVaultBtn" onclick="lockVault()" class="hidden inline-flex items-center px-3 py-1.5 border border-slate-300 text-xs font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition">
+            <svg class="w-4 h-4 mr-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            Lock Vault
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs (Only visible when unlocked) -->
+      <nav id="mainNav" class="hidden flex space-x-6 overflow-x-auto text-sm border-t border-slate-100 pt-1 -mb-px">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn py-2.5 px-1 font-medium text-slate-600 hover:text-slate-900 border-b-2 border-transparent transition whitespace-nowrap tab-active">
+          Dashboard
+        </button>
+        <button onclick="switchTab('bills')" id="tab-bills" class="tab-btn py-2.5 px-1 font-medium text-slate-600 hover:text-slate-900 border-b-2 border-transparent transition whitespace-nowrap">
+          Bills & Arrears
+          <span id="unpaidBillsCountBadge" class="ml-1.5 py-0.5 px-2 rounded-full text-xs bg-rose-100 text-rose-700 font-semibold">0</span>
+        </button>
+        <button onclick="switchTab('reimbursements')" id="tab-reimbursements" class="tab-btn py-2.5 px-1 font-medium text-slate-600 hover:text-slate-900 border-b-2 border-transparent transition whitespace-nowrap">
+          Reimbursement Ledger
+        </button>
+        <button onclick="switchTab('vehicles')" id="tab-vehicles" class="tab-btn py-2.5 px-1 font-medium text-slate-600 hover:text-slate-900 border-b-2 border-transparent transition whitespace-nowrap">
+          Vehicles & Storage
+        </button>
+        <button onclick="switchTab('poa')" id="tab-poa" class="tab-btn py-2.5 px-1 font-medium text-slate-600 hover:text-slate-900 border-b-2 border-transparent transition whitespace-nowrap">
+          Family Roles & Care Team
+        </button>
+        <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn py-2.5 px-1 font-medium text-slate-600 hover:text-slate-900 border-b-2 border-transparent transition whitespace-nowrap">
+          Backup & Settings
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full no-print">
+
+    <!-- 1. LOCK / UNLOCK VIEW (When vault is locked or first-time setup) -->
+    <div id="authScreen" class="py-12 flex justify-center items-center">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-xl p-8 max-w-md w-full">
+        <div class="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-inner">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+
+        <div id="setupWizardHeader" class="hidden text-center mb-6">
+          <h2 class="text-xl font-bold text-slate-900">Welcome, Mark & Shelly</h2>
+          <p class="text-sm text-slate-500 mt-1">Set a master family passphrase to encrypt Renee's financial vault. Data is stored safely using AES-256 encryption.</p>
+        </div>
+
+        <div id="unlockHeader" class="text-center mb-6">
+          <h2 class="text-xl font-bold text-slate-900">Renee Family Vault</h2>
+          <p class="text-sm text-slate-500 mt-1">Enter your family passphrase to unlock confidential bills, account numbers, and reimbursement records.</p>
+        </div>
+
+        <form id="vaultAuthForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Family Passphrase</label>
+            <div class="relative">
+              <input type="password" id="passphraseInput" required placeholder="Enter passphrase..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 pr-10 text-sm transition" />
+              <button type="button" onclick="togglePasswordVisibility('passphraseInput')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div id="confirmPassphraseBlock" class="hidden">
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Confirm Passphrase</label>
+            <input type="password" id="confirmPassphraseInput" placeholder="Confirm your passphrase..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 text-sm transition" />
+          </div>
+
+          <div id="authErrorMsg" class="hidden p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium"></div>
+
+          <button type="submit" id="authSubmitBtn" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-lg shadow-md shadow-emerald-600/20 transition flex justify-center items-center">
+            <span>Unlock Vault</span>
+          </button>
+        <div class="mt-3 p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-center text-xs text-slate-600">
+            <span class="font-bold text-slate-700">Family Passphrase Hint:</span><br>
+            <span class="font-mono text-slate-500 text-[11px]">Laurie [M/D/YY] Shelly [M/D/YY] Autumn [M/D/YY]</span>
+          </div>
+        </form>
+
+        <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
+          <span>Client-side AES-GCM 256</span>
+          <button onclick="showResetVaultConfirmation()" class="text-rose-600 hover:underline">Reset / New Vault</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. UNLOCKED APP CONTAINER -->
+    <div id="appContainer" class="hidden space-y-6">
+
+      <!-- ================= TAB 1: DASHBOARD ================= -->
+      <section id="view-dashboard" class="space-y-6">
+        <!-- Critical POA & Financial Alert Banner -->
+        <div class="rounded-xl bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-emerald-500/10 border border-amber-200/80 p-5 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-start space-x-3.5">
+              <div class="p-2.5 bg-amber-500 text-white rounded-xl shadow-md">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-slate-900">Family Care Team & Immediate Action Items</h3>
+                <p class="text-xs text-slate-600 mt-1 max-w-3xl">
+                  <strong>Autumn Aguilar</strong> holds legal Power of Attorney (POA). <strong>Laurie Salse</strong> is on-site in Sun City caring for Renee and going to Chase Bank tomorrow morning. <strong>Mark & Shelly Matthews</strong> are advancing funds to cure arrears. All family advances are tracked for reverse mortgage reimbursement.
+                </p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="switchTab('reimbursements')" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition">
+                View Reimbursement Claim
+              </button>
+              <button onclick="openAddExpenseModal()" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 shadow-sm transition">
+                + Log Advance
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Action Checklist -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 pt-4 border-t border-amber-200/60">
+            <div class="bg-white/90 p-3 rounded-lg border border-amber-200 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-rose-600 uppercase tracking-wide">Storage Lien Deadline</span>
+                <p class="text-xs font-semibold text-slate-800">Daytona Storage: Sept 7 ($750.00)</p>
+              </div>
+              <span class="px-2 py-0.5 text-[10px] font-bold bg-rose-100 text-rose-700 rounded">Urgent</span>
+            </div>
+            <div class="bg-white/90 p-3 rounded-lg border border-amber-200 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-amber-600 uppercase tracking-wide">Utility Shutoff Risk</span>
+                <p class="text-xs font-semibold text-slate-800">Edison ($385.84) & EMWD ($369.13)</p>
+              </div>
+              <span class="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded">Past Due</span>
+            </div>
+            <div class="bg-white/90 p-3 rounded-lg border border-amber-200 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-purple-600 uppercase tracking-wide">Tomorrow at Chase Bank</span>
+                <p class="text-xs font-semibold text-slate-800">Laurie & Renee Opening New Acct</p>
+              </div>
+              <span class="px-2 py-0.5 text-[10px] font-bold bg-purple-100 text-purple-700 rounded">Morning</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Key Performance Indicators -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- KPI 1 -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider">Total Overdue Debt</span>
+              <div class="p-2 bg-rose-50 text-rose-600 rounded-lg">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-slate-900" id="kpiTotalDebt">$0.00</div>
+            <p class="text-[11px] text-slate-500 mt-1">Pending past-due bills & storage</p>
+          </div>
+
+          <!-- KPI 2 -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider">Owed Mark & Shelly</span>
+              <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-emerald-600" id="kpiOwedMarkShelly">$0.00</div>
+            <p class="text-[11px] text-slate-500 mt-1">Reverse mortgage reimbursement</p>
+          </div>
+
+          <!-- KPI 3 -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider">Owed Laurie / Autumn</span>
+              <div class="p-2 bg-sky-50 text-sky-600 rounded-lg">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-sky-600" id="kpiOwedLaurie">$0.00</div>
+            <p class="text-[11px] text-slate-500 mt-1" id="kpiOwedLaurieSubtitle">Laurie Salse & Autumn Aguilar advances</p>
+          </div>
+
+          <!-- KPI 4 -->
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider">Vehicles Under Care</span>
+              <div class="p-2 bg-purple-50 text-purple-600 rounded-lg">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+              </div>
+            </div>
+            <div class="text-2xl font-black text-slate-900" id="kpiVehiclesCount">5 Vehicles</div>
+            <p class="text-[11px] text-purple-600 font-medium mt-1 cursor-pointer hover:underline" onclick="switchTab('vehicles')">CA PNO saves ~$790 in DMV fees</p>
+          </div>
+        </div>
+
+        <!-- Two Columns: Urgent Bills Table & Immediate Action Steps -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left 2 Cols: Urgent Bills Preview -->
+          <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+              <h4 class="font-bold text-slate-900 text-sm">Urgent & Overdue Bills</h4>
+              <button onclick="switchTab('bills')" class="text-xs text-emerald-600 hover:text-emerald-700 font-semibold">View All Bills &rarr;</button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-slate-200 text-xs">
+                <thead class="bg-slate-50 text-slate-600 uppercase font-semibold">
+                  <tr>
+                    <th class="py-2.5 px-4 text-left">Payee / Creditor</th>
+                    <th class="py-2.5 px-4 text-left">Due Date</th>
+                    <th class="py-2.5 px-4 text-left">Amount</th>
+                    <th class="py-2.5 px-4 text-left">Priority</th>
+                    <th class="py-2.5 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardBillsTableBody" class="divide-y divide-slate-100">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right Col: Reverse Mortgage & Autumn POA Checklist -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h4 class="font-bold text-slate-900 text-sm">Action Roadway</h4>
+              <span class="text-[11px] font-medium text-slate-500">Autumn (POA) & Mark/Shelly</span>
+            </div>
+            <div class="space-y-3 text-xs" id="quickRoadmapList">
+              <!-- Quick tasks injected -->
+            </div>
+            <button onclick="switchTab('poa')" class="w-full mt-2 py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition text-center block">
+              Open POA Command Center &rarr;
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: BILLS & ARREARS ================= -->
+      <section id="view-bills" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Bills & Arrears Command Center</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Pre-populated from Laurie's notes. When you pay a bill, it automatically logs your reimbursement claim.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="openAddBillModal()" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition">
+              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Add New Bill
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex items-center space-x-2 border-b border-slate-200 pb-3 overflow-x-auto text-xs font-medium">
+          <button onclick="filterBills('all')" id="filter-all" class="px-3 py-1.5 rounded-lg bg-slate-800 text-white">All (<span id="count-all">0</span>)</button>
+          <button onclick="filterBills('unpaid')" id="filter-unpaid" class="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100">Past Due / Unpaid (<span id="count-unpaid">0</span>)</button>
+          <button onclick="filterBills('critical')" id="filter-critical" class="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100">Critical Priority (<span id="count-critical">0</span>)</button>
+          <button onclick="filterBills('paid')" id="filter-paid" class="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100">Paid & Claimed (<span id="count-paid">0</span>)</button>
+        </div>
+
+        <!-- Bills List / Cards -->
+        <div id="billsListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Injected via JS -->
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: REIMBURSEMENT LEDGER ================= -->
+      <section id="view-reimbursements" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Family Reimbursement Ledger</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Itemized out-of-pocket expenses to be reimbursed by the reverse mortgage proceeds or estate.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="openAddExpenseModal()" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition">
+              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              + Log Out-of-Pocket Expense
+            </button>
+            <button onclick="prepareAndPrintSettlement()" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-slate-800 text-white text-xs font-semibold hover:bg-slate-900 shadow-sm transition">
+              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              Print Formal Settlement Statement
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary Totals Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Owed Mark & Shelly</span>
+            <div class="text-2xl font-black text-emerald-600 mt-1" id="ledgerMarkShellyTotal">$0.00</div>
+            <p class="text-[11px] text-slate-500 mt-1">Mark & Shelly Matthews</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Owed Laurie Salse</span>
+            <div class="text-2xl font-black text-sky-600 mt-1" id="ledgerLaurieTotal">$0.00</div>
+            <p class="text-[11px] text-slate-500 mt-1">On-Site Coordinator</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Owed Autumn Aguilar</span>
+            <div class="text-2xl font-black text-purple-600 mt-1" id="ledgerAutumnTotal">$0.00</div>
+            <p class="text-[11px] text-slate-500 mt-1">Attorney-in-Fact / POA</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Estate Claim</span>
+            <div class="text-2xl font-black text-slate-900 mt-1" id="ledgerGrandTotal">$0.00</div>
+            <p class="text-[11px] text-slate-500 mt-1">Combined reverse mortgage claim</p>
+          </div>
+        </div>
+
+        <!-- Ledger Table -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+            <h4 class="font-bold text-slate-900 text-sm">Itemized Advances Log</h4>
+            <div class="flex items-center space-x-2 text-xs">
+              <select id="ledgerPayerFilter" onchange="renderLedger()" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-slate-700 bg-white">
+                <option value="all">All Family Payers</option>
+                <option value="Mark & Shelly Matthews">Mark & Shelly Matthews</option>
+                <option value="Laurie Salse">Laurie Salse</option>
+                <option value="Autumn Aguilar">Autumn Aguilar</option>
+              </select>
+              <button onclick="exportToGoogleSheetsCSV()" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg font-semibold transition">
+                CSV Export
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 text-xs">
+              <thead class="bg-slate-50 text-slate-600 uppercase font-semibold">
+                <tr>
+                  <th class="py-3 px-4 text-left">Date</th>
+                  <th class="py-3 px-4 text-left">Item / Payee</th>
+                  <th class="py-3 px-4 text-left">Paid By</th>
+                  <th class="py-3 px-4 text-left">Method & Ref #</th>
+                  <th class="py-3 px-4 text-left">Amount</th>
+                  <th class="py-3 px-4 text-left">POA Status</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reimbursementTableBody" class="divide-y divide-slate-100">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: VEHICLES & STORAGE ================= -->
+      <section id="view-vehicles" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Vehicles & Storage Asset Manager</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Sam's vintage Ford vans, DMV renewals, and storage unit liquidation strategy.</p>
+          </div>
+          <button onclick="openAddVehicleModal()" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition">
+            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Add Vehicle / Asset
+          </button>
+        </div>
+
+        <!-- Strategy Advisory Box: California Planned Non-Operation (PNO) -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-5 shadow-sm">
+          <div class="flex items-start space-x-3.5">
+            <div class="p-2.5 bg-blue-600 text-white rounded-xl shadow-md">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-base font-bold text-blue-950">California DMV Planned Non-Operation (PNO) Strategy</h3>
+              <p class="text-xs text-blue-900 leading-relaxed max-w-4xl">
+                Paying full California DMV registration fees for 5 stored/non-operational vehicles costs <strong>~$915.00</strong>.
+                By filing <strong>Planned Non-Operation (PNO)</strong> on the CA DMV website (dmv.ca.gov) or by phone (800-777-0133), the cost is only <strong>~$25.00 per vehicle</strong> (approx <strong>$125 total</strong>), immediately saving <strong>~$790.00</strong> and halting late fee accumulation!
+              </p>
+              <div class="flex flex-wrap items-center gap-2 mt-2 pt-2 border-t border-blue-200/60 text-xs font-medium text-blue-900">
+                <span>⚠️ Note: When selling, <strong>Autumn (as POA)</strong> will sign the title transfer (DMV Form REG 227 / Bill of Sale).</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Storage Unit Alert Box -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="px-2 py-0.5 text-xs font-bold bg-rose-100 text-rose-700 rounded-md">Storage Lien Underway</span>
+                <h4 class="font-bold text-slate-900 text-sm">Daytona RV & Boat Storage — Unit #01122</h4>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">
+                24194 Daytona Cove, Perris, CA 92570 &bull; Phone: (951) 657-2500 &bull; Email: daytona@storagedirect.com
+              </p>
+              <p class="text-xs text-slate-500 mt-0.5">
+                Notice dated 04/07/26. Total lien balance $1,498.00. Laurie noted: $750/mo plan, 2 payments due on Sept 7th.
+              </p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <a href="tel:9516572500" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">
+                Call Facility
+              </a>
+              <button onclick="openPayBillModal('B03')" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+                Pay / Log Advance
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicle Inventory Cards -->
+        <div id="vehicleCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Injected via JS -->
+        </div>
+      </section>
+
+      <!-- ================= TAB 5: FAMILY ROLES & CARE TEAM ================= -->
+      <section id="view-poa" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Family Roles & Care Coordination Team</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Clear delegation and mutual support between Autumn (Legal POA), Laurie (On-Site Care), and Mark & Shelly (Financial Sponsors).</p>
+          </div>
+        </div>
+
+        <!-- 3-Column Family Team Card -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Autumn Aguilar -->
+          <div class="bg-white p-5 rounded-xl border border-purple-200 shadow-sm space-y-2.5 ring-1 ring-purple-100">
+            <div class="flex items-center space-x-2 text-purple-700">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <div>
+                <h3 class="font-bold text-sm text-slate-900 leading-tight">Autumn Aguilar</h3>
+                <span class="text-[10px] font-bold text-purple-700 uppercase tracking-wide">Legal Power of Attorney</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <strong>Attorney-in-Fact:</strong> Legally in charge of executing official documents and authorizations for Renee Termine.
+            </p>
+            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside pt-1 border-t border-purple-50">
+              <li>Signs Chase Bank fraud affidavit & official account authorizations.</li>
+              <li>Signs reverse mortgage disclosures & loan closing paperwork.</li>
+              <li>Executes vehicle title transfers (DMV REG 227) and Planned Non-Op (PNO).</li>
+              <li>Authorizes reverse mortgage reimbursement payments to Mark & Shelly and Laurie.</li>
+            </ul>
+          </div>
+
+          <!-- Laurie Salse -->
+          <div class="bg-white p-5 rounded-xl border border-sky-200 shadow-sm space-y-2.5 ring-1 ring-sky-100">
+            <div class="flex items-center space-x-2 text-sky-700">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              <div>
+                <h3 class="font-bold text-sm text-slate-900 leading-tight">Laurie Salse</h3>
+                <span class="text-[10px] font-bold text-sky-700 uppercase tracking-wide">On-Site Care Coordinator</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <strong>On-Scene Assessment & Support:</strong> Currently staying with Renee in Sun City (traveling from Oregon) to provide daily care and gather intelligence.
+            </p>
+            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside pt-1 border-t border-sky-50">
+              <li><strong>Tomorrow's Priority:</strong> Accompanying Renee in-person to Chase Bank to open a new clean account and initiate the fraud dispute.</li>
+              <li>Gathers and sorts incoming mail, past-due notices, and account numbers.</li>
+              <li>Assesses Renee's cognitive state, nutrition, medication, and home safety.</li>
+              <li>Tracks any on-scene out-of-pocket expenses for full reverse mortgage reimbursement.</li>
+            </ul>
+          </div>
+
+          <!-- Mark & Shelly Matthews -->
+          <div class="bg-white p-5 rounded-xl border border-emerald-200 shadow-sm space-y-2.5 ring-1 ring-emerald-100">
+            <div class="flex items-center space-x-2 text-emerald-700">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <div>
+                <h3 class="font-bold text-sm text-slate-900 leading-tight">Mark & Shelly Matthews</h3>
+                <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wide">Financial Sponsors & Admins</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <strong>Capital Advances & Financial Systems:</strong> Funding immediate bills out-of-pocket and managing debt negotiations.
+            </p>
+            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside pt-1 border-t border-emerald-50">
+              <li>Advancing funds to cure utility arrears (Edison, EMWD) and stop Daytona storage lien.</li>
+              <li>Negotiating discounts with debt collectors (HOA) and healthcare providers.</li>
+              <li>Maintaining the centralized reimbursement ledger & audit documentation.</li>
+              <li>Supporting Autumn with call scripts and reverse mortgage liaison.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Autumn's Calling Scripts & Checklists -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-4">
+          <h4 class="font-bold text-slate-900 text-sm">Institutional POA Filings & Calling Scripts</h4>
+          <div class="space-y-3" id="poaChecklistContainer">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <!-- Memory Care Transition Roadmap -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <h4 class="font-bold text-slate-900 text-sm">Renee's Long-Term Care & Safety Milestones</h4>
+          <p class="text-xs text-slate-500">Milestones to ensure Renee is in a secure environment with specialized Alzheimer's care.</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 text-xs">
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="font-bold text-slate-800 block">1. Clinical Assessment</span>
+              <p class="text-slate-600 mt-1">Formal cognitive diagnosis through Loma Linda / primary physician to substantiate memory care level of care and activate insurance/benefit programs.</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="font-bold text-slate-800 block">2. In-Home Safety & Care</span>
+              <p class="text-slate-600 mt-1">Immediate stove shutoff / safety locks, medication oversight, and caregiver support while reverse mortgage is processing.</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="font-bold text-slate-800 block">3. Memory Care Selection</span>
+              <p class="text-slate-600 mt-1">Tour licensed residential care facilities for the elderly (RCFE) in Sun City, Menifee, and Murrieta. Budget funded by reverse mortgage line of credit.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 6: BACKUP & SETTINGS ================= -->
+      <section id="view-settings" class="hidden space-y-6">
+        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Backup & Data Portability</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Export to Google Sheets or backup your encrypted vault to safely share between Mark, Shelly, and Laurie.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <!-- Google Sheets Export Card -->
+            <div class="p-4 bg-emerald-50/60 rounded-xl border border-emerald-200 space-y-2">
+              <h4 class="font-bold text-emerald-950 text-sm flex items-center">
+                <svg class="w-4 h-4 mr-1.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Google Sheets / Excel CSV
+              </h4>
+              <p class="text-xs text-emerald-900">
+                Downloads a CSV file containing all bills, payment logs, and vehicle registries ready to open in Google Sheets.
+              </p>
+              <button onclick="exportToGoogleSheetsCSV()" class="mt-2 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+                Download CSV for Google Sheets
+              </button>
+            </div>
+
+            <!-- Encrypted Vault Backup Card -->
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center">
+                <svg class="w-4 h-4 mr-1.5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                Encrypted Vault Backup (.json)
+              </h4>
+              <p class="text-xs text-slate-600">
+                Downloads the full encrypted vault file. Can be imported on any device with your passphrase.
+              </p>
+              <button onclick="downloadEncryptedBackup()" class="mt-2 px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+                Download Encrypted Backup
+              </button>
+            </div>
+          </div>
+
+          <!-- Restore Vault -->
+          <div class="border-t border-slate-200 pt-5 space-y-3">
+            <h4 class="font-bold text-slate-900 text-sm">Restore Encrypted Backup</h4>
+            <p class="text-xs text-slate-500">Restore an existing backup file to update or migrate data.</p>
+            <input type="file" id="restoreFileInput" accept=".json,.renee-backup" class="text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200" onchange="handleRestoreBackup(event)" />
+          </div>
+
+          <!-- Change Passphrase -->
+          <div class="border-t border-slate-200 pt-5 space-y-3">
+            <h4 class="font-bold text-slate-900 text-sm">Security & Passphrase</h4>
+            <p class="text-xs text-slate-500">Update your family master passphrase anytime.</p>
+            <button onclick="openChangePassphraseModal()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">
+              Change Family Passphrase
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ================= PRINTABLE SETTLEMENT STATEMENT (For Reverse Mortgage / Legal) ================= -->
+  <div id="printableSettlement" class="hidden p-8 max-w-4xl mx-auto bg-white text-slate-900 font-serif leading-relaxed text-sm">
+    <div class="border-b-2 border-slate-900 pb-4 mb-6">
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="text-xl font-bold uppercase tracking-wider">Accounting of Family Advances & Demand for Reimbursement</h1>
+          <p class="text-xs text-slate-600 mt-1">In the Matter of the Care, Housing & Maintenance of <strong>Renee Termine</strong></p>
+          <p class="text-xs text-slate-600">Property: 28271 Westover Way, Sun City, CA 92586</p>
+        </div>
+        <div class="text-right text-xs">
+          <p><strong>Date Prepared:</strong> <span id="printStatementDate"></span></p>
+          <p><strong>Target Claim:</strong> Reverse Mortgage Loan Proceeds</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preamble -->
+    <div class="text-xs space-y-2 mb-6 text-slate-700 leading-normal">
+      <p>
+        This formal statement certifies the out-of-pocket expenses and necessary debts advanced by <strong>Mark & Shelly Matthews</strong>, <strong>Laurie Salse</strong>, and/or <strong>Autumn Aguilar</strong> to preserve the residence, prevent utility shutoffs, prevent lien foreclosure of estate property, and provide essential healthcare for Renee Termine following the death of Samuel Termine.
+      </p>
+      <p>
+        These advances were made with the knowledge and authorization of <strong>Autumn Aguilar</strong>, the designated Attorney-in-Fact holding Power of Attorney for Renee Termine. Reimbursement in full is demanded upon funding and disbursement of Renee Termine's reverse mortgage or estate proceeds.
+      </p>
+    </div>
+
+    <!-- Summary Box -->
+    <div class="border border-slate-300 p-4 mb-6 bg-slate-50 text-xs">
+      <div class="grid grid-cols-4 gap-4 font-sans">
+        <div>
+          <span class="text-slate-500 font-medium">Owed Mark & Shelly:</span>
+          <p class="text-lg font-bold text-slate-900" id="printMarkShellyTotal">$0.00</p>
+          <span class="text-[10px] text-slate-400">Financial Sponsors</span>
+        </div>
+        <div>
+          <span class="text-slate-500 font-medium">Owed Laurie Salse:</span>
+          <p class="text-lg font-bold text-slate-900" id="printLaurieTotal">$0.00</p>
+          <span class="text-[10px] text-slate-400">On-Site Coordinator</span>
+        </div>
+        <div>
+          <span class="text-slate-500 font-medium">Owed Autumn Aguilar:</span>
+          <p class="text-lg font-bold text-slate-900" id="printAutumnTotal">$0.00</p>
+          <span class="text-[10px] text-slate-400">Attorney-in-Fact</span>
+        </div>
+        <div>
+          <span class="text-slate-500 font-medium">Total Demand Claim:</span>
+          <p class="text-lg font-bold text-emerald-700" id="printGrandTotal">$0.00</p>
+          <span class="text-[10px] text-slate-400">Loan Settlement</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Itemized Table -->
+    <table class="min-w-full border border-slate-300 text-xs mb-8">
+      <thead class="bg-slate-100 font-bold border-b border-slate-300">
+        <tr>
+          <th class="py-2 px-3 text-left border-r border-slate-300">Date</th>
+          <th class="py-2 px-3 text-left border-r border-slate-300">Item / Payee</th>
+          <th class="py-2 px-3 text-left border-r border-slate-300">Advanced By</th>
+          <th class="py-2 px-3 text-left border-r border-slate-300">Payment Ref #</th>
+          <th class="py-2 px-3 text-right">Amount</th>
+        </tr>
+      </thead>
+      <tbody id="printTableBody" class="divide-y divide-slate-200">
+        <!-- Injected -->
+      </tbody>
+    </table>
+
+    <!-- Formal Legal Sign-Off Block -->
+    <div class="border-t-2 border-slate-900 pt-6 space-y-6 text-xs">
+      <p class="italic text-slate-600 leading-normal">
+        "I, <strong>Autumn Aguilar</strong>, as the duly authorized Attorney-in-Fact holding Power of Attorney for Renee Termine, hereby review, confirm, and approve the aforementioned advances incurred for Renee Termine's vital care, home preservation, and obligations. I hereby direct that Mark & Shelly Matthews, Laurie Salse, and Autumn Aguilar be reimbursed immediately from loan disbursements upon the closing of the reverse mortgage."
+      </p>
+
+      <div class="grid grid-cols-3 gap-6 pt-4">
+        <div>
+          <div class="border-b border-slate-900 pb-1 h-10"></div>
+          <p class="font-bold mt-1">Autumn Aguilar</p>
+          <p class="text-[11px] text-slate-600">Attorney-in-Fact / Power of Attorney for Renee Termine</p>
+          <p class="text-[11px] text-slate-500">Date: ________________________</p>
+        </div>
+        <div>
+          <div class="border-b border-slate-900 pb-1 h-10"></div>
+          <p class="font-bold mt-1">Laurie Salse</p>
+          <p class="text-[11px] text-slate-600">Claimant / On-Site Care Coordinator</p>
+          <p class="text-[11px] text-slate-500">Date: ________________________</p>
+        </div>
+        <div>
+          <div class="border-b border-slate-900 pb-1 h-10"></div>
+          <p class="font-bold mt-1">Mark & Shelly Matthews</p>
+          <p class="text-[11px] text-slate-600">Claimants / Financial Sponsors</p>
+          <p class="text-[11px] text-slate-500">Date: ________________________</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Modal: Pay Bill / Log Advance -->
+  <div id="payBillModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base" id="payModalTitle">Pay Bill & Claim Reimbursement</h3>
+        <button onclick="closeModal('payBillModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <form id="payBillForm" onsubmit="handlePayBillSubmit(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="payBillId" />
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Bill / Creditor</label>
+          <input type="text" id="payBillCreditor" readonly class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-medium" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Who Paid? *</label>
+            <select id="payBillPaidBy" required class="w-full px-3 py-2 border border-slate-300 rounded-lg font-medium text-slate-800">
+              <option value="Mark & Shelly Matthews">Mark & Shelly Matthews</option>
+              <option value="Laurie Salse">Laurie Salse</option>
+              <option value="Autumn Aguilar">Autumn Aguilar</option>
+              <option value="Renee's Funds">Renee's Own Funds</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Amount Paid ($) *</label>
+            <input type="number" step="0.01" id="payBillAmount" required class="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-900" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Payment Date *</label>
+            <input type="date" id="payBillDate" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Payment Method</label>
+            <input type="text" id="payBillMethod" placeholder="e.g. Chase Visa, Checking" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Confirmation / Ref #</label>
+          <input type="text" id="payBillRef" placeholder="e.g. Conf #883921 / Check #104" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Notes / Receipt Information</label>
+          <textarea id="payBillNotes" rows="2" placeholder="Paid online, receipt kept in binder..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+        </div>
+
+        <div class="pt-3 flex justify-end space-x-2">
+          <button type="button" onclick="closeModal('payBillModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Record Payment & Claim</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Settlement & Negotiation Notes -->
+  <div id="settlementModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">Settlement & Negotiation</span>
+          <h3 class="font-bold text-slate-900 text-base mt-1" id="settlementModalCreditor">Creditor Name</h3>
+        </div>
+        <button onclick="closeModal('settlementModal')" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1">
+        <div class="flex justify-between">
+          <span class="text-slate-500">Original Amount Claimed:</span>
+          <span class="font-black text-slate-900" id="settlementOriginalAmount">$0.00</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Account / Reference #:</span>
+          <span class="font-mono text-slate-700" id="settlementAccountNum">N/A</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Contact / Phone:</span>
+          <span class="font-semibold text-slate-700" id="settlementPhone">N/A</span>
+        </div>
+      </div>
+
+      <form id="settlementForm" onsubmit="handleSaveSettlement(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="settlementBillId" />
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Negotiation Status</label>
+            <select id="settlementStatusSelect" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium">
+              <option value="Not Started">Not Started</option>
+              <option value="In Negotiation / Dispute">In Negotiation / Dispute</option>
+              <option value="Settlement Agreed (Pending Pay)">Settlement Agreed (Pending Pay)</option>
+              <option value="Settled for Less & Paid">Settled for Less & Paid</option>
+              <option value="Paid in Full (No Discount)">Paid in Full (No Discount)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Agreed Settlement ($)</label>
+            <input type="number" step="0.01" id="settlementAgreedInput" placeholder="e.g. 450.00" oninput="updateSettlementSavingsCalc()" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-900" />
+          </div>
+        </div>
+
+        <div id="settlementSavingsNotice" class="hidden p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between">
+          <span>Projected Estate Savings:</span>
+          <span id="settlementSavingsAmount" class="text-sm font-black">$0.00</span>
+        </div>
+
+        <div class="border-t border-slate-200 pt-3 space-y-2">
+          <label class="block font-bold text-slate-800">Add Negotiation Note / Call Log</label>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="col-span-1">
+              <select id="noteAuthor" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-slate-700">
+                <option value="Mark Matthews">Mark Matthews</option>
+                <option value="Shelly Matthews">Shelly Matthews</option>
+                <option value="Laurie Salse">Laurie Salse</option>
+                <option value="Autumn Aguilar (POA)">Autumn Aguilar (POA)</option>
+              </select>
+            </div>
+            <div class="col-span-2">
+              <input type="date" id="noteDate" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-slate-700" />
+            </div>
+          </div>
+          <textarea id="newNegotiationNoteText" rows="2" placeholder="e.g. Spoke with rep Mike. Offered $400 lump sum to settle in full. Rep checking with manager." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+        </div>
+
+        <!-- History of past negotiation notes -->
+        <div class="border-t border-slate-200 pt-3 space-y-2">
+          <span class="block font-bold text-slate-700">Negotiation & Call History</span>
+          <div id="negotiationNotesHistory" class="space-y-2 max-h-40 overflow-y-auto pr-1">
+            <!-- Injected notes -->
+          </div>
+        </div>
+
+        <div class="pt-3 flex justify-end space-x-2 border-t border-slate-100">
+          <button type="button" onclick="closeModal('settlementModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-md shadow-indigo-600/20">Save Negotiation Details</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Custom Expense -->
+  <div id="addExpenseModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Log Out-of-Pocket Expense</h3>
+        <button onclick="closeModal('addExpenseModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <form id="addExpenseForm" onsubmit="handleAddExpenseSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Expense Description *</label>
+          <input type="text" id="expenseDescription" required placeholder="e.g. Groceries, Medication, Locks, Attorney" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Category</label>
+            <select id="expenseCategory" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
+              <option value="Care & Medical">Care & Medical</option>
+              <option value="Home & Utilities">Home & Utilities</option>
+              <option value="Legal & Financial">Legal & Financial</option>
+              <option value="Storage & Property">Storage & Property</option>
+              <option value="Groceries & Daily Living">Groceries & Daily Living</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Amount ($) *</label>
+            <input type="number" step="0.01" id="expenseAmount" required placeholder="0.00" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-900" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Paid By *</label>
+            <select id="expensePaidBy" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-semibold text-slate-800">
+              <option value="Mark & Shelly Matthews">Mark & Shelly Matthews</option>
+              <option value="Laurie Salse">Laurie Salse</option>
+              <option value="Autumn Aguilar">Autumn Aguilar</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Date *</label>
+            <input type="date" id="expenseDate" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Payment Method</label>
+            <input type="text" id="expenseMethod" placeholder="e.g. Visa, Check, Cash" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Ref / Receipt #</label>
+            <input type="text" id="expenseRef" placeholder="e.g. Receipt #984" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Notes</label>
+          <textarea id="expenseNotes" rows="2" placeholder="Item details, purpose..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+        </div>
+
+        <div class="pt-3 flex justify-end space-x-2">
+          <button type="button" onclick="closeModal('addExpenseModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Add Expense</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Bill -->
+  <div id="addBillModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Add Creditor / Bill</h3>
+        <button onclick="closeModal('addBillModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <form id="addBillForm" onsubmit="handleAddBillSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Creditor / Payee Name *</label>
+          <input type="text" id="newBillCreditor" required placeholder="e.g. Gas Company" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Account / Policy #</label>
+            <input type="text" id="newBillAccount" placeholder="Acct #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Phone Number</label>
+            <input type="text" id="newBillPhone" placeholder="800-000-0000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Amount Due ($) *</label>
+            <input type="number" step="0.01" id="newBillAmount" required placeholder="0.00" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-900" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Due Date</label>
+            <input type="date" id="newBillDueDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Priority</label>
+            <select id="newBillPriority" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Notes / Instructions</label>
+          <textarea id="newBillNotes" rows="2" placeholder="Account history, contact person..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+        </div>
+
+        <div class="pt-3 flex justify-end space-x-2">
+          <button type="button" onclick="closeModal('addBillModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Save Bill</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Vehicle -->
+  <div id="addVehicleModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Add Vehicle / Property</h3>
+        <button onclick="closeModal('addVehicleModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <form id="addVehicleForm" onsubmit="handleAddVehicleSubmit(event)" class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Year & Make *</label>
+            <input type="text" id="vYearMake" required placeholder="e.g. 1966 Ford" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Model / Body</label>
+            <input type="text" id="vModelBody" placeholder="e.g. Econoline Van" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">License Plate</label>
+            <input type="text" id="vPlate" placeholder="Plate #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 uppercase" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">VIN</label>
+            <input type="text" id="vVin" placeholder="VIN #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 uppercase" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">DMV Renewal Fee ($)</label>
+            <input type="number" step="0.01" id="vFee" placeholder="0.00" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Renewal Due Date</label>
+            <input type="date" id="vDueDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Location & Disposition Status</label>
+          <select id="vStatus" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
+            <option value="In Storage (Daytona)">In Storage (Daytona RV & Boat)</option>
+            <option value="At Home (Sun City)">At Home (Sun City)</option>
+            <option value="File PNO (Planned Non-Op)">File PNO (Planned Non-Op)</option>
+            <option value="Prepare for Sale">Prepare for Sale</option>
+            <option value="Sold / Transferred">Sold / Transferred</option>
+          </select>
+        </div>
+
+        <div class="pt-3 flex justify-end space-x-2">
+          <button type="button" onclick="closeModal('addVehicleModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Save Vehicle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Change Passphrase -->
+  <div id="changePassphraseModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Change Master Passphrase</h3>
+        <button onclick="closeModal('changePassphraseModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <form id="changePassForm" onsubmit="handleChangePassphraseSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">New Family Passphrase *</label>
+          <input type="password" id="newPassInput" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Confirm New Passphrase *</label>
+          <input type="password" id="confirmNewPassInput" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+        </div>
+        <div id="changePassError" class="hidden p-2 rounded bg-rose-50 border border-rose-200 text-rose-700 font-medium"></div>
+
+        <div class="pt-3 flex justify-end space-x-2">
+          <button type="button" onclick="closeModal('changePassphraseModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Update Passphrase</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT APPLICATION CORE ================= -->
+  <script>
+    /* ================= DEFAULT PRE-POPULATED DATA ================= */
+    const ENCRYPTED_INITIAL_VAULT = {
+  "salt": "0lxH9MHX3A2rxrgVYHFKmQ==",
+  "iv": "hS1cPMRSfPVWaR5n",
+  "data": "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",
+  "version": "1.0"
+};
+
+    /* ================= STATE & CRYPTO ENGINE ================= */
+    let currentVaultState = null;
+    let currentMasterKey = null; // Stored in memory only while unlocked
+    const STORAGE_KEY = "renee_family_vault_aes256";
+
+    // Text encoder & decoder
+    const enc = new TextEncoder();
+    const dec = new TextDecoder();
+
+    // Derive AES-GCM 256 key from passphrase and salt via PBKDF2
+    async function deriveKey(passphrase, salt) {
+      const keyMaterial = await crypto.subtle.importKey(
+        "raw",
+        enc.encode(passphrase),
+        "PBKDF2",
+        false,
+        ["deriveKey"]
+      );
+      return crypto.subtle.deriveKey(
+        {
+          name: "PBKDF2",
+          salt: salt,
+          iterations: 100000,
+          hash: "SHA-256"
+        },
+        keyMaterial,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["encrypt", "decrypt"]
+      );
+    }
+
+    // Encrypt object state to JSON with base64 ciphertext, iv, and salt
+    async function encryptState(stateObj, passphrase) {
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveKey(passphrase, salt);
+      const plaintext = enc.encode(JSON.stringify(stateObj));
+      const ciphertext = await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv: iv },
+        key,
+        plaintext
+      );
+
+      return {
+        salt: btoa(String.fromCharCode(...salt)),
+        iv: btoa(String.fromCharCode(...iv)),
+        data: btoa(String.fromCharCode(...new Uint8Array(ciphertext))),
+        version: "1.0"
+      };
+    }
+
+    // Decrypt stored payload
+    async function decryptPayload(payload, passphrase) {
+      const salt = Uint8Array.from(atob(payload.salt), c => c.charCodeAt(0));
+      const iv = Uint8Array.from(atob(payload.iv), c => c.charCodeAt(0));
+      const ciphertext = Uint8Array.from(atob(payload.data), c => c.charCodeAt(0));
+
+      const key = await deriveKey(passphrase, salt);
+      const decrypted = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: iv },
+        key,
+        ciphertext
+      );
+      return JSON.parse(dec.decode(decrypted));
+    }
+
+    // Save current decrypted state to localStorage (encrypted)
+    async function persistVault() {
+      if (!currentVaultState || !window.masterPassphraseCache) return;
+      currentVaultState.meta.lastUpdated = new Date().toISOString();
+      const encrypted = await encryptState(currentVaultState, window.masterPassphraseCache);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
+    }
+
+    /* ================= INITIALIZATION & AUTH ================= */
+    window.addEventListener("DOMContentLoaded", () => {
+      const setupHeader = document.getElementById("setupWizardHeader");
+      const unlockHeader = document.getElementById("unlockHeader");
+      const confirmBlock = document.getElementById("confirmPassphraseBlock");
+      const submitBtn = document.getElementById("authSubmitBtn");
+
+      setupHeader.classList.add("hidden");
+      unlockHeader.classList.remove("hidden");
+      confirmBlock.classList.add("hidden");
+      submitBtn.querySelector("span").textContent = "Unlock Family Vault";
+
+      // Default dates on forms
+      const todayStr = new Date().toISOString().split("T")[0];
+      if (document.getElementById("payBillDate")) document.getElementById("payBillDate").value = todayStr;
+      if (document.getElementById("expenseDate")) document.getElementById("expenseDate").value = todayStr;
+    });
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const pass = document.getElementById("passphraseInput").value.trim();
+      const errBox = document.getElementById("authErrorMsg");
+      errBox.classList.add("hidden");
+
+      if (!pass) return;
+
+      const existingVaultStr = localStorage.getItem(STORAGE_KEY);
+
+      try {
+        let restoredState = null;
+        if (existingVaultStr) {
+          const payload = JSON.parse(existingVaultStr);
+          restoredState = await decryptPayload(payload, pass);
+        } else {
+          // Decrypt the pre-encrypted initial family vault
+          restoredState = await decryptPayload(ENCRYPTED_INITIAL_VAULT, pass);
+        }
+
+        currentVaultState = restoredState;
+        window.masterPassphraseCache = pass;
+        // Ensure saved to localStorage
+        await persistVault();
+        unlockAppUI();
+      } catch (err) {
+        console.error(err);
+        errBox.textContent = "Incorrect passphrase. Please check spacing and capitalization.";
+        errBox.classList.remove("hidden");
+      }
+    }
+
+    function unlockAppUI() {
+      document.getElementById("authScreen").classList.add("hidden");
+      document.getElementById("appContainer").classList.remove("hidden");
+      document.getElementById("mainNav").classList.remove("hidden");
+      document.getElementById("lockVaultBtn").classList.remove("hidden");
+
+      const badge = document.getElementById("vaultStatusBadge");
+      badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800";
+      badge.innerHTML = '<span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full"></span> Unlocked';
+
+      renderAllViews();
+    }
+
+    function lockVault() {
+      currentVaultState = null;
+      window.masterPassphraseCache = null;
+      document.getElementById("passphraseInput").value = "";
+      document.getElementById("authScreen").classList.remove("hidden");
+      document.getElementById("appContainer").classList.add("hidden");
+      document.getElementById("mainNav").classList.add("hidden");
+      document.getElementById("lockVaultBtn").classList.add("hidden");
+
+      const badge = document.getElementById("vaultStatusBadge");
+      badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800";
+      badge.innerHTML = '<span class="w-1.5 h-1.5 mr-1.5 bg-amber-500 rounded-full animate-pulse"></span> Locked';
+    }
+
+    function showResetVaultConfirmation() {
+      if (confirm("Are you sure you want to reset the vault? This will erase local storage and re-initialize with the default ledger. Make sure you have an exported backup if you have saved changes!")) {
+        localStorage.removeItem(STORAGE_KEY);
+        window.location.reload();
+      }
+    }
+
+    /* ================= TAB NAVIGATION ================= */
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("tab-active"));
+      document.getElementById("tab-" + tabId).classList.add("tab-active");
+
+      document.querySelectorAll("#appContainer > section").forEach(sec => sec.classList.add("hidden"));
+      document.getElementById("view-" + tabId).classList.remove("hidden");
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ================= DATA RENDERING ================= */
+    function renderAllViews() {
+      renderDashboard();
+      renderBills();
+      renderLedger();
+      renderVehicles();
+      renderPOACenter();
+    }
+
+    function formatMoney(amount) {
+      return "$" + Number(amount || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderDashboard() {
+      if (!currentVaultState) return;
+
+      // 1. Calculate Overdue Debt (Exclude paid bills and fraud dispute)
+      const unpaidBills = currentVaultState.bills.filter(b => b.status !== "Paid" && b.status !== "Autopay");
+      const totalDebt = unpaidBills.reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+      document.getElementById("kpiTotalDebt").textContent = formatMoney(totalDebt);
+
+      // 2. Reimbursements Owed
+      const owedMarkShelly = currentVaultState.reimbursements
+        .filter(r => (r.paidBy && r.paidBy.includes("Mark")) && r.status !== "Reimbursed")
+        .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+      document.getElementById("kpiOwedMarkShelly").textContent = formatMoney(owedMarkShelly);
+
+      const owedLaurie = currentVaultState.reimbursements
+        .filter(r => (r.paidBy && r.paidBy.includes("Laurie")) && r.status !== "Reimbursed")
+        .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+      const owedAutumn = currentVaultState.reimbursements
+        .filter(r => (r.paidBy && r.paidBy.includes("Autumn")) && r.status !== "Reimbursed")
+        .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+
+      document.getElementById("kpiOwedLaurie").textContent = formatMoney(owedLaurie + owedAutumn);
+      const sub = document.getElementById("kpiOwedLaurieSubtitle");
+      if (sub) {
+        if (owedAutumn > 0) {
+          sub.textContent = `Laurie: ${formatMoney(owedLaurie)} | Autumn: ${formatMoney(owedAutumn)}`;
+        } else {
+          sub.textContent = `Laurie: ${formatMoney(owedLaurie)} (On-Site Coordinator)`;
+        }
+      }
+
+      // 3. Vehicles Count
+      document.getElementById("kpiVehiclesCount").textContent = `${currentVaultState.vehicles.length} Vehicles`;
+
+      // 4. Bills Badge Count
+      document.getElementById("unpaidBillsCountBadge").textContent = unpaidBills.length;
+
+      // 5. Urgent Bills Table in Dashboard
+      const tbody = document.getElementById("dashboardBillsTableBody");
+      tbody.innerHTML = "";
+      const urgentList = unpaidBills.slice(0, 5);
+
+      if (urgentList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">All current bills paid or up to date!</td></tr>`;
+      } else {
+        urgentList.forEach(b => {
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-slate-50";
+          tr.innerHTML = `
+            <td class="py-2.5 px-4 font-semibold text-slate-900">${b.creditor}</td>
+            <td class="py-2.5 px-4 text-slate-600">${b.dueDate}</td>
+            <td class="py-2.5 px-4 font-bold text-slate-900">${formatMoney(b.amount)}</td>
+            <td class="py-2.5 px-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+                b.priority === 'Critical' ? 'bg-rose-100 text-rose-700' :
+                b.priority === 'High' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'
+              }">${b.priority}</span>
+            </td>
+            <td class="py-2.5 px-4 text-right">
+              <button onclick="openPayBillModal('${b.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-bold shadow-xs">
+                Pay Bill
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 6. Action Roadway List
+      const roadway = document.getElementById("quickRoadmapList");
+      roadway.innerHTML = `
+        <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50/70">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-800">1. Chase Fraud & New Acct</span>
+            <span class="text-[10px] px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded font-bold">Autumn POA</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">Dispute ~$1,200 withdrawn on Sam's card & secure new checking.</p>
+        </div>
+        <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50/70">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-800">2. Reverse Mortgage Tracking</span>
+            <span class="text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded font-bold">Funding Source</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">Application submitted on paid-off home. Target for full reimbursement.</p>
+        </div>
+        <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50/70">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-800">3. CA DMV PNO Filing</span>
+            <span class="text-[10px] px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded font-bold">Saves ~$790</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">File non-operation for Sam's vintage vans to stop DMV penalties.</p>
+        </div>
+      `;
+    }
+
+    /* ================= BILLS MANAGEMENT ================= */
+    let currentBillFilter = "all";
+
+    function filterBills(filter) {
+      currentBillFilter = filter;
+      document.querySelectorAll("[id^='filter-']").forEach(btn => {
+        btn.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100";
+      });
+      document.getElementById("filter-" + filter).className = "px-3 py-1.5 rounded-lg bg-slate-800 text-white font-semibold";
+      renderBills();
+    }
+
+    function renderBills() {
+      if (!currentVaultState) return;
+
+      const container = document.getElementById("billsListContainer");
+      container.innerHTML = "";
+
+      // Update count badges
+      document.getElementById("count-all").textContent = currentVaultState.bills.length;
+      document.getElementById("count-unpaid").textContent = currentVaultState.bills.filter(b => b.status !== "Paid").length;
+      document.getElementById("count-critical").textContent = currentVaultState.bills.filter(b => b.priority === "Critical").length;
+      document.getElementById("count-paid").textContent = currentVaultState.bills.filter(b => b.status === "Paid").length;
+
+      let filtered = currentVaultState.bills;
+      if (currentBillFilter === "unpaid") filtered = filtered.filter(b => b.status !== "Paid");
+      else if (currentBillFilter === "critical") filtered = filtered.filter(b => b.priority === "Critical");
+      else if (currentBillFilter === "paid") filtered = filtered.filter(b => b.status === "Paid");
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="col-span-2 py-10 text-center text-slate-400 bg-white rounded-xl border border-slate-200">No bills matching this filter.</div>`;
+        return;
+      }
+
+      filtered.forEach(b => {
+        const isPaid = b.status === "Paid";
+        const card = document.createElement("div");
+        card.className = `p-5 rounded-xl border transition shadow-sm ${
+          isPaid ? 'bg-slate-50/80 border-slate-200' :
+          b.priority === 'Critical' ? 'bg-white border-rose-200 ring-1 ring-rose-100' : 'bg-white border-slate-200'
+        }`;
+
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+                  isPaid ? 'bg-emerald-100 text-emerald-800' :
+                  b.priority === 'Critical' ? 'bg-rose-100 text-rose-700' :
+                  b.priority === 'High' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'
+                }">${isPaid ? 'PAID & CLAIMED' : b.priority}</span>
+                <span class="text-[11px] font-medium text-slate-400">${b.category}</span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-base mt-1.5">${b.creditor}</h3>
+            </div>
+            <div class="text-right">
+              <span class="text-lg font-black text-slate-900 block">${formatMoney(b.amount)}</span>
+              <span class="text-[11px] font-semibold ${isPaid ? 'text-emerald-600' : 'text-slate-500'}">
+                ${isPaid ? 'Paid' : 'Due: ' + b.dueDate}
+              </span>
+            </div>
+          </div>
+
+          <div class="mt-3 pt-3 border-t border-slate-100 space-y-1.5 text-xs text-slate-600">
+            <div class="flex justify-between">
+              <span class="text-slate-400">Account #:</span>
+              <span class="font-mono text-slate-700 select-all">${b.accountNum || 'N/A'}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">Phone:</span>
+              <a href="tel:${b.phone.replace(/[^0-9]/g, '')}" class="text-emerald-600 hover:underline font-medium">${b.phone || 'N/A'}</a>
+            </div>
+            ${b.notes ? `
+            <div class="bg-amber-50/70 p-2 rounded border border-amber-100/80 text-[11px] text-amber-900 mt-2">
+              <strong>Notes:</strong> ${b.notes}
+            </div>` : ''}
+
+            ${(b.settlementStatus && b.settlementStatus !== 'Not Started') || (b.negotiationNotes && b.negotiationNotes.length > 0) ? `
+            <div class="bg-indigo-50/80 p-2.5 rounded-lg border border-indigo-200/80 text-xs mt-2 space-y-1">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-indigo-900 flex items-center">
+                  🤝 ${b.settlementStatus || 'In Negotiation'}
+                </span>
+                ${b.settlementAgreedAmount ? `
+                  <span class="text-emerald-700 font-black">
+                    Agreed: ${formatMoney(b.settlementAgreedAmount)} <span class="text-[10px] text-emerald-600 font-semibold">(Saves ${formatMoney(b.amount - b.settlementAgreedAmount)})</span>
+                  </span>` : ''}
+              </div>
+              ${b.negotiationNotes && b.negotiationNotes.length > 0 ? `
+                <div class="text-[11px] text-indigo-950 pt-1 border-t border-indigo-100/80">
+                  <span class="font-semibold text-indigo-800">Latest Note (${b.negotiationNotes[0].author} - ${b.negotiationNotes[0].date}):</span>
+                  <p class="italic text-slate-700 mt-0.5">"${b.negotiationNotes[0].text}"</p>
+                </div>
+              ` : ''}
+            </div>` : ''}
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+              <button onclick="deleteBill('${b.id}')" class="text-[11px] text-slate-400 hover:text-rose-600">Remove</button>
+              <button onclick="openSettlementModal('${b.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold border border-indigo-200 transition flex items-center">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                Negotiate / Notes ${(b.negotiationNotes && b.negotiationNotes.length > 0) ? `(${b.negotiationNotes.length})` : ''}
+              </button>
+            </div>
+            <div>
+              ${isPaid ? `
+                <button onclick="revertBillStatus('${b.id}')" class="text-xs text-slate-500 hover:text-slate-800 underline">
+                  Mark Unpaid
+                </button>
+              ` : `
+                <button onclick="openPayBillModal('${b.id}')" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-sm transition">
+                  Pay & Log Reimbursement
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openSettlementModal(billId) {
+      const bill = currentVaultState.bills.find(b => b.id === billId);
+      if (!bill) return;
+
+      document.getElementById("settlementBillId").value = bill.id;
+      document.getElementById("settlementModalCreditor").textContent = bill.creditor;
+      document.getElementById("settlementOriginalAmount").textContent = formatMoney(bill.amount);
+      document.getElementById("settlementAccountNum").textContent = bill.accountNum || "N/A";
+      document.getElementById("settlementPhone").textContent = bill.phone || "N/A";
+
+      document.getElementById("settlementStatusSelect").value = bill.settlementStatus || "Not Started";
+      document.getElementById("settlementAgreedInput").value = bill.settlementAgreedAmount !== undefined && bill.settlementAgreedAmount !== null ? bill.settlementAgreedAmount : "";
+      
+      document.getElementById("noteDate").value = new Date().toISOString().split("T")[0];
+      document.getElementById("newNegotiationNoteText").value = "";
+
+      updateSettlementSavingsCalc();
+      renderNegotiationHistory(bill);
+
+      document.getElementById("settlementModal").classList.remove("hidden");
+    }
+
+    function updateSettlementSavingsCalc() {
+      const billId = document.getElementById("settlementBillId").value;
+      const bill = currentVaultState.bills.find(b => b.id === billId);
+      if (!bill) return;
+
+      const agreed = parseFloat(document.getElementById("settlementAgreedInput").value);
+      const notice = document.getElementById("settlementSavingsNotice");
+      const savingsSpan = document.getElementById("settlementSavingsAmount");
+
+      if (!isNaN(agreed) && agreed < bill.amount) {
+        const savings = bill.amount - agreed;
+        savingsSpan.textContent = formatMoney(savings) + ` (${Math.round((savings / bill.amount) * 100)}% discount)`;
+        notice.classList.remove("hidden");
+      } else {
+        notice.classList.add("hidden");
+      }
+    }
+
+    function renderNegotiationHistory(bill) {
+      const histContainer = document.getElementById("negotiationNotesHistory");
+      histContainer.innerHTML = "";
+
+      const notes = bill.negotiationNotes || [];
+      if (notes.length === 0) {
+        histContainer.innerHTML = `<p class="text-slate-400 italic text-[11px]">No negotiation notes logged yet. Use the box above to record conversations, offers, and agent names.</p>`;
+        return;
+      }
+
+      notes.forEach((n, idx) => {
+        const item = document.createElement("div");
+        item.className = "p-2 rounded bg-slate-50 border border-slate-200 text-[11px] space-y-0.5";
+        item.innerHTML = `
+          <div class="flex justify-between items-center text-slate-500 font-semibold">
+            <span class="text-indigo-700">${n.author || 'Family Member'}</span>
+            <span>${n.date}</span>
+          </div>
+          <p class="text-slate-800">${n.text}</p>
+        `;
+        histContainer.appendChild(item);
+      });
+    }
+
+    async function handleSaveSettlement(e) {
+      e.preventDefault();
+      const billId = document.getElementById("settlementBillId").value;
+      const bill = currentVaultState.bills.find(b => b.id === billId);
+      if (!bill) return;
+
+      bill.settlementStatus = document.getElementById("settlementStatusSelect").value;
+      const agreedVal = document.getElementById("settlementAgreedInput").value;
+      bill.settlementAgreedAmount = agreedVal !== "" ? parseFloat(agreedVal) : null;
+
+      const newText = document.getElementById("newNegotiationNoteText").value.trim();
+      if (newText) {
+        if (!bill.negotiationNotes) bill.negotiationNotes = [];
+        bill.negotiationNotes.unshift({
+          date: document.getElementById("noteDate").value,
+          author: document.getElementById("noteAuthor").value,
+          text: newText
+        });
+      }
+
+      await persistVault();
+      closeModal("settlementModal");
+      renderAllViews();
+    }
+
+    function openPayBillModal(billId) {
+      const bill = currentVaultState.bills.find(b => b.id === billId);
+      if (!bill) return;
+
+      document.getElementById("payBillId").value = bill.id;
+      
+      const payAmount = (bill.settlementAgreedAmount !== undefined && bill.settlementAgreedAmount !== null && bill.settlementAgreedAmount > 0)
+        ? bill.settlementAgreedAmount
+        : bill.amount;
+
+      document.getElementById("payBillCreditor").value = `${bill.creditor} (${formatMoney(bill.amount)})`;
+      document.getElementById("payBillAmount").value = payAmount;
+      document.getElementById("payBillDate").value = new Date().toISOString().split("T")[0];
+      document.getElementById("payBillRef").value = "";
+
+      let initialNotes = `Payment for ${bill.creditor}. Account: ${bill.accountNum}.`;
+      if (bill.settlementAgreedAmount && bill.settlementAgreedAmount < bill.amount) {
+        initialNotes += ` Negotiated settlement applied: paid ${formatMoney(payAmount)} to satisfy full balance of ${formatMoney(bill.amount)} (Saved ${formatMoney(bill.amount - payAmount)}).`;
+      }
+      document.getElementById("payBillNotes").value = initialNotes;
+
+      document.getElementById("payBillModal").classList.remove("hidden");
+    }
+
+    async function handlePayBillSubmit(e) {
+      e.preventDefault();
+      const billId = document.getElementById("payBillId").value;
+      const bill = currentVaultState.bills.find(b => b.id === billId);
+      if (!bill) return;
+
+      const paidBy = document.getElementById("payBillPaidBy").value;
+      const amount = parseFloat(document.getElementById("payBillAmount").value) || bill.amount;
+      const date = document.getElementById("payBillDate").value;
+      const method = document.getElementById("payBillMethod").value || "Credit Card";
+      const ref = document.getElementById("payBillRef").value || "Direct Pay";
+      const notes = document.getElementById("payBillNotes").value;
+
+      // Update bill status
+      bill.status = "Paid";
+      if (bill.settlementAgreedAmount && bill.settlementAgreedAmount <= amount) {
+        bill.settlementStatus = "Settled for Less & Paid";
+      }
+
+      // If paid by Mark & Shelly or Laurie, add to Reimbursement Ledger!
+      if (paidBy !== "Renee's Funds") {
+        const claimId = "CLM-" + Date.now().toString().slice(-6);
+        currentVaultState.reimbursements.unshift({
+          id: claimId,
+          date: date,
+          description: `Bill Payment: ${bill.creditor}`,
+          category: bill.category || "Utilities & Debt",
+          paidBy: paidBy,
+          method: method,
+          refNum: ref,
+          amount: amount,
+          originalBillAmount: bill.amount,
+          savings: (bill.amount > amount) ? (bill.amount - amount) : 0,
+          status: "Pending Reverse Mortgage",
+          poaApproved: true,
+          notes: notes,
+          linkedBillId: bill.id
+        });
+      }
+
+      await persistVault();
+      closeModal("payBillModal");
+      renderAllViews();
+    }
+
+    async function revertBillStatus(billId) {
+      const bill = currentVaultState.bills.find(b => b.id === billId);
+      if (!bill) return;
+      if (confirm(`Mark ${bill.creditor} as unpaid again?`)) {
+        bill.status = "Past Due";
+        await persistVault();
+        renderAllViews();
+      }
+    }
+
+    async function deleteBill(billId) {
+      if (confirm("Delete this bill entry?")) {
+        currentVaultState.bills = currentVaultState.bills.filter(b => b.id !== billId);
+        await persistVault();
+        renderAllViews();
+      }
+    }
+
+    function openAddBillModal() {
+      document.getElementById("addBillForm").reset();
+      document.getElementById("addBillModal").classList.remove("hidden");
+    }
+
+    async function handleAddBillSubmit(e) {
+      e.preventDefault();
+      const newBill = {
+        id: "B" + Date.now().toString().slice(-4),
+        creditor: document.getElementById("newBillCreditor").value.trim(),
+        accountNum: document.getElementById("newBillAccount").value.trim(),
+        phone: document.getElementById("newBillPhone").value.trim(),
+        amount: parseFloat(document.getElementById("newBillAmount").value) || 0,
+        dueDate: document.getElementById("newBillDueDate").value || "Pending",
+        priority: document.getElementById("newBillPriority").value,
+        category: "General Expense",
+        status: "Past Due",
+        notes: document.getElementById("newBillNotes").value.trim()
+      };
+
+      currentVaultState.bills.push(newBill);
+      await persistVault();
+      closeModal("addBillModal");
+      renderAllViews();
+    }
+
+    /* ================= REIMBURSEMENT LEDGER ================= */
+    function renderLedger() {
+      if (!currentVaultState) return;
+
+      const payerFilter = document.getElementById("ledgerPayerFilter") ? document.getElementById("ledgerPayerFilter").value : "all";
+
+      const markShellyTotal = currentVaultState.reimbursements
+        .filter(r => r.paidBy && r.paidBy.includes("Mark"))
+        .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+
+      const laurieTotal = currentVaultState.reimbursements
+        .filter(r => r.paidBy && r.paidBy.includes("Laurie"))
+        .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+
+      const autumnTotal = currentVaultState.reimbursements
+        .filter(r => r.paidBy && r.paidBy.includes("Autumn"))
+        .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+
+      const grandTotal = markShellyTotal + laurieTotal + autumnTotal;
+
+      document.getElementById("ledgerMarkShellyTotal").textContent = formatMoney(markShellyTotal);
+      document.getElementById("ledgerLaurieTotal").textContent = formatMoney(laurieTotal);
+      if (document.getElementById("ledgerAutumnTotal")) document.getElementById("ledgerAutumnTotal").textContent = formatMoney(autumnTotal);
+      document.getElementById("ledgerGrandTotal").textContent = formatMoney(grandTotal);
+
+      // Print elements
+      document.getElementById("printMarkShellyTotal").textContent = formatMoney(markShellyTotal);
+      document.getElementById("printLaurieTotal").textContent = formatMoney(laurieTotal);
+      if (document.getElementById("printAutumnTotal")) document.getElementById("printAutumnTotal").textContent = formatMoney(autumnTotal);
+      document.getElementById("printGrandTotal").textContent = formatMoney(grandTotal);
+      document.getElementById("printStatementDate").textContent = new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
+
+      // Table render
+      const tbody = document.getElementById("reimbursementTableBody");
+      const printTbody = document.getElementById("printTableBody");
+      tbody.innerHTML = "";
+      printTbody.innerHTML = "";
+
+      let list = currentVaultState.reimbursements;
+      if (payerFilter !== "all") {
+        const query = payerFilter.split(" ")[0].toLowerCase();
+        list = list.filter(r => r.paidBy && r.paidBy.toLowerCase().includes(query));
+      }
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">No out-of-pocket expenses logged yet. Click "+ Log Out-of-Pocket Expense" or pay a bill above to record an advance.</td></tr>`;
+        printTbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500 italic">No advances logged at this time.</td></tr>`;
+        return;
+      }
+
+      list.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50";
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-mono text-slate-600">${r.date}</td>
+          <td class="py-3 px-4">
+            <span class="font-bold text-slate-900 block">${r.description}</span>
+            <span class="text-[11px] text-slate-400">${r.category}</span>
+          </td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${
+              r.paidBy === 'Mark & Shelly' ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800'
+            }">${r.paidBy}</span>
+          </td>
+          <td class="py-3 px-4 text-slate-600">
+            <div>${r.method || 'N/A'}</div>
+            <div class="text-[10px] text-slate-400 font-mono">${r.refNum || ''}</div>
+          </td>
+          <td class="py-3 px-4 font-black text-slate-900">${formatMoney(r.amount)}</td>
+          <td class="py-3 px-4">
+            <span class="px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-200 rounded text-[10px] font-bold">
+              POA Acknowledged
+            </span>
+          </td>
+          <td class="py-3 px-4 text-right">
+            <button onclick="deleteReimbursement('${r.id}')" class="text-slate-400 hover:text-rose-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+
+        // Printable statement row
+        const ptr = document.createElement("tr");
+        ptr.innerHTML = `
+          <td class="py-2 px-3 border-r border-slate-300 font-mono">${r.date}</td>
+          <td class="py-2 px-3 border-r border-slate-300"><strong>${r.description}</strong> (${r.category})</td>
+          <td class="py-2 px-3 border-r border-slate-300">${r.paidBy}</td>
+          <td class="py-2 px-3 border-r border-slate-300">${r.method || ''} ${r.refNum ? '(' + r.refNum + ')' : ''}</td>
+          <td class="py-2 px-3 text-right font-bold">${formatMoney(r.amount)}</td>
+        `;
+        printTbody.appendChild(ptr);
+      });
+    }
+
+    function openAddExpenseModal() {
+      document.getElementById("addExpenseForm").reset();
+      document.getElementById("expenseDate").value = new Date().toISOString().split("T")[0];
+      document.getElementById("addExpenseModal").classList.remove("hidden");
+    }
+
+    async function handleAddExpenseSubmit(e) {
+      e.preventDefault();
+      const claimId = "CLM-" + Date.now().toString().slice(-6);
+      const newExp = {
+        id: claimId,
+        date: document.getElementById("expenseDate").value,
+        description: document.getElementById("expenseDescription").value.trim(),
+        category: document.getElementById("expenseCategory").value,
+        paidBy: document.getElementById("expensePaidBy").value,
+        method: document.getElementById("expenseMethod").value.trim() || "Out of Pocket",
+        refNum: document.getElementById("expenseRef").value.trim(),
+        amount: parseFloat(document.getElementById("expenseAmount").value) || 0,
+        status: "Pending Reverse Mortgage",
+        poaApproved: true,
+        notes: document.getElementById("expenseNotes").value.trim()
+      };
+
+      currentVaultState.reimbursements.unshift(newExp);
+      await persistVault();
+      closeModal("addExpenseModal");
+      renderAllViews();
+    }
+
+    async function deleteReimbursement(claimId) {
+      if (confirm("Delete this reimbursement record?")) {
+        currentVaultState.reimbursements = currentVaultState.reimbursements.filter(r => r.id !== claimId);
+        await persistVault();
+        renderAllViews();
+      }
+    }
+
+    function prepareAndPrintSettlement() {
+      renderLedger();
+      window.print();
+    }
+
+    /* ================= VEHICLES & STORAGE ================= */
+    function renderVehicles() {
+      if (!currentVaultState) return;
+
+      const container = document.getElementById("vehicleCardsContainer");
+      container.innerHTML = "";
+
+      currentVaultState.vehicles.forEach(v => {
+        const card = document.createElement("div");
+        card.className = "bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3";
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">${v.year} Vintage</span>
+              <h3 class="font-bold text-slate-900 text-base mt-1">${v.year} ${v.make}</h3>
+              <p class="text-xs text-slate-500">Body: ${v.bodyType || 'Van'}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-sm font-black text-slate-900">${formatMoney(v.fee)}</span>
+              <span class="text-[11px] text-slate-500 block">Due: ${v.dueDate}</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-xs space-y-1 font-mono">
+            <div class="flex justify-between">
+              <span class="text-slate-400">License Plate:</span>
+              <span class="font-bold text-slate-800">${v.plate || 'N/A'}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">VIN:</span>
+              <span class="text-slate-700 select-all">${v.vin || 'N/A'}</span>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-600">
+            <span class="font-semibold text-slate-700">PNO Status:</span>
+            <span class="ml-1 text-emerald-700 font-medium">${v.pnoStatus || 'Eligible for PNO'}</span>
+            ${v.notes ? `<p class="mt-1 text-[11px] text-slate-500 italic">${v.notes}</p>` : ''}
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
+            <button onclick="deleteVehicle('${v.id}')" class="text-slate-400 hover:text-rose-600 text-[11px]">Delete</button>
+            <a href="https://www.dmv.ca.gov/portal/vehicle-registration/vehicle-registration-renewal/planned-non-operation-pno/" target="_blank" class="px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded font-semibold transition">
+              File PNO Online &rarr;
+            </a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openAddVehicleModal() {
+      document.getElementById("addVehicleForm").reset();
+      document.getElementById("addVehicleModal").classList.remove("hidden");
+    }
+
+    async function handleAddVehicleSubmit(e) {
+      e.preventDefault();
+      const newV = {
+        id: "V" + Date.now().toString().slice(-4),
+        year: document.getElementById("vYearMake").value.split(" ")[0] || "1960s",
+        make: document.getElementById("vYearMake").value.trim(),
+        bodyType: document.getElementById("vModelBody").value.trim() || "Van",
+        plate: document.getElementById("vPlate").value.trim(),
+        vin: document.getElementById("vVin").value.trim(),
+        fee: parseFloat(document.getElementById("vFee").value) || 0,
+        dueDate: document.getElementById("vDueDate").value || "Pending",
+        location: document.getElementById("vStatus").value,
+        pnoStatus: "Eligible for PNO (~$25)",
+        notes: ""
+      };
+
+      currentVaultState.vehicles.push(newV);
+      await persistVault();
+      closeModal("addVehicleModal");
+      renderAllViews();
+    }
+
+    async function deleteVehicle(vId) {
+      if (confirm("Remove vehicle record?")) {
+        currentVaultState.vehicles = currentVaultState.vehicles.filter(v => v.id !== vId);
+        await persistVault();
+        renderAllViews();
+      }
+    }
+
+    /* ================= AUTUMN'S POA & CARE ================= */
+    function renderPOACenter() {
+      if (!currentVaultState) return;
+
+      const container = document.getElementById("poaChecklistContainer");
+      container.innerHTML = "";
+
+      currentVaultState.poaTasks.forEach(task => {
+        const item = document.createElement("div");
+        item.className = "p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2 text-xs";
+        item.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="font-bold text-slate-900 text-sm">${task.institution}</span>
+              <span class="text-slate-500 ml-2">&bull; ${task.purpose}</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">${task.status}</span>
+          </div>
+
+          <p class="text-slate-600">${task.details}</p>
+
+          ${task.script ? `
+          <div class="bg-white p-3 rounded-lg border border-slate-200 text-slate-700">
+            <span class="font-bold text-purple-700 block mb-1">📞 Autumn's Phone Script:</span>
+            <p class="italic">${task.script}</p>
+          </div>` : ''}
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    /* ================= EXPORT & BACKUP ================= */
+    function exportToGoogleSheetsCSV() {
+      if (!currentVaultState) return;
+
+      let csv = "SECTION 1: SUMMARY OF OVERDUE DEBTS, NEGOTIATIONS & REIMBURSEMENT CLAIMS\n";
+      csv += "Metric,Amount,Notes\n";
+
+      const unpaidBills = currentVaultState.bills.filter(b => b.status !== "Paid" && b.status !== "Autopay");
+      const totalDebt = unpaidBills.reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+      const markShelly = currentVaultState.reimbursements
+        .filter(r => r.paidBy && r.paidBy.includes("Mark"))
+        .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+      const laurie = currentVaultState.reimbursements
+        .filter(r => r.paidBy && r.paidBy.includes("Laurie"))
+        .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+      const autumn = currentVaultState.reimbursements
+        .filter(r => r.paidBy && r.paidBy.includes("Autumn"))
+        .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+
+      const totalSavings = currentVaultState.bills.reduce((sum, b) => {
+        if (b.settlementAgreedAmount && b.settlementAgreedAmount < b.amount) {
+          return sum + (b.amount - b.settlementAgreedAmount);
+        }
+        return sum;
+      }, 0);
+
+      csv += `"Total Overdue Bills Needed (Original)",${totalDebt.toFixed(2)},"Excludes paid and autopay"\n`;
+      csv += `"Negotiation Savings Identified",${totalSavings.toFixed(2)},"Discounts negotiated on debts"\n`;
+      csv += `"Owed to Mark & Shelly Matthews (Advances)",${markShelly.toFixed(2)},"To be reimbursed from reverse mortgage loan proceeds"\n`;
+      csv += `"Owed to Laurie Salse (Advances)",${laurie.toFixed(2)},"To be reimbursed from reverse mortgage loan proceeds"\n`;
+      csv += `"Owed to Autumn Aguilar (Advances)",${autumn.toFixed(2)},"To be reimbursed from reverse mortgage loan proceeds"\n`;
+      csv += `"Combined Family Settlement Demand",${(markShelly + laurie + autumn).toFixed(2)},"Authorized by Autumn Aguilar (POA)"\n\n`;
+
+      csv += "SECTION 2: ITEMIZED REIMBURSEMENT LEDGER (CLAIMS FOR REVERSE MORTGAGE)\n";
+      csv += "Claim ID,Date,Description,Category,Paid By,Payment Method,Ref / Check #,Amount Paid,Original Amount,Savings Achieved,POA Approved?,Status,Notes\n";
+      currentVaultState.reimbursements.forEach(r => {
+        csv += `"${r.id}","${r.date}","${(r.description||'').replace(/"/g, '""')}","${r.category}","${r.paidBy}","${r.method}","${r.refNum}",${Number(r.amount).toFixed(2)},${r.originalBillAmount ? Number(r.originalBillAmount).toFixed(2) : Number(r.amount).toFixed(2)},${r.savings ? Number(r.savings).toFixed(2) : "0.00"},"Yes","${r.status}","${(r.notes||'').replace(/"/g, '""')}"\n`;
+      });
+      csv += "\n";
+
+      csv += "SECTION 3: CREDITOR & BILLS INVENTORY (WITH SETTLEMENT STATUS & NOTES)\n";
+      csv += "Bill ID,Category,Creditor,Account Number,Phone,Due Date,Original Amount,Agreed Settlement,Savings,Settlement Status,Priority,Status,Negotiation Notes\n";
+      currentVaultState.bills.forEach(b => {
+        const agreed = (b.settlementAgreedAmount !== undefined && b.settlementAgreedAmount !== null) ? Number(b.settlementAgreedAmount).toFixed(2) : "";
+        const savings = (b.settlementAgreedAmount && b.settlementAgreedAmount < b.amount) ? (b.amount - b.settlementAgreedAmount).toFixed(2) : "0.00";
+        const notesStr = (b.negotiationNotes || []).map(n => `[${n.date} ${n.author}]: ${n.text}`).join(" | ");
+        csv += `"${b.id}","${b.category}","${(b.creditor||'').replace(/"/g, '""')}","${(b.accountNum||'').replace(/"/g, '""')}","${b.phone}","${b.dueDate}",${Number(b.amount).toFixed(2)},"${agreed}","${savings}","${b.settlementStatus || 'Not Started'}","${b.priority}","${b.status}","${(notesStr || b.notes || '').replace(/"/g, '""')}"\n`;
+      });
+      csv += "\n";
+
+      csv += "SECTION 4: VEHICLE & ASSET REGISTRY (CA DMV PNO)\n";
+      csv += "Vehicle ID,Year,Make & Model,Body,License Plate,VIN,Renewal Due,DMV Fee,CA PNO Eligible?,Status\n";
+      currentVaultState.vehicles.forEach(v => {
+        csv += `"${v.id}","${v.year}","${v.make}","${v.bodyType}","${v.plate}","${v.vin}","${v.dueDate}",${Number(v.fee).toFixed(2)},"Yes","${v.pnoStatus}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `renee_finances_sheets_export_${new Date().toISOString().split("T")[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadEncryptedBackup() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const blob = new Blob([raw], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `renee_vault_backup_${new Date().toISOString().split("T")[0]}.renee-backup`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function handleRestoreBackup(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function(evt) {
+        try {
+          const contents = evt.target.result;
+          const parsed = JSON.parse(contents);
+          if (!parsed.salt || !parsed.iv || !parsed.data) {
+            alert("Invalid backup file format.");
+            return;
+          }
+          if (confirm("Restore this backup? This will replace your local browser vault.")) {
+            localStorage.setItem(STORAGE_KEY, contents);
+            alert("Backup restored! Please unlock using the passphrase that encrypted this backup.");
+            window.location.reload();
+          }
+        } catch (err) {
+          alert("Error reading backup file: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function openChangePassphraseModal() {
+      document.getElementById("changePassForm").reset();
+      document.getElementById("changePassError").classList.add("hidden");
+      document.getElementById("changePassphraseModal").classList.remove("hidden");
+    }
+
+    async function handleChangePassphraseSubmit(e) {
+      e.preventDefault();
+      const p1 = document.getElementById("newPassInput").value.trim();
+      const p2 = document.getElementById("confirmNewPassInput").value.trim();
+      const err = document.getElementById("changePassError");
+
+      if (p1 !== p2) {
+        err.textContent = "New passphrases do not match.";
+        err.classList.remove("hidden");
+        return;
+      }
+      if (p1.length < 4) {
+        err.textContent = "Passphrase must be at least 4 characters.";
+        err.classList.remove("hidden");
+        return;
+      }
+
+      window.masterPassphraseCache = p1;
+      await persistVault();
+      closeModal("changePassphraseModal");
+      alert("Master passphrase successfully updated!");
+    }
+
+    /* ================= MODAL HELPERS ================= */
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add("hidden");
+    }
+
+    function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === "password" ? "text" : "password";
+    }
+  </script>
+</body>
+</html>

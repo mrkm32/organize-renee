@@ -1,0 +1,5 @@
+# Local confidential ledger files (keep on Mac, do not push to public GitHub)
+renee_financial_ledger.csv
+encrypted_payload.json
+*.renee-backup
+.DS_Store
