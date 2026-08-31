@@ -17,8 +17,8 @@ This repository contains **NO sensitive financial plaintext, account numbers, ad
 
 | Family Member | Designated Role | Primary Responsibilities |
 | :--- | :--- | :--- |
-| **Autumn Aguilar** | **Legal Power of Attorney & Authorized Representative (Attorney-in-Fact)** | Legally in charge. Sole authorized signatory for Chase Bank fraud affidavits, new bank accounts, vehicle title transfers (DMV Form REG 227), and reverse mortgage closing disclosures. Formally approves family reimbursement claims. |
-| **Laurie Salse** | **On-Site Care Coordinator & Primary Family Liaison** | On-scene staying with Renee in Sun City. Assesses day-to-day cognitive and physical safety, organizes physical mail/bills, and **escorts Renee in person to Chase Bank** to secure accounts. Eligible for reverse mortgage reimbursement for on-scene advances. |
+| **Autumn Aguilar** | **Legal Power of Attorney & Authorized Representative (Attorney-in-Fact)** | Legally in charge. Sole authorized signatory for vehicle title transfers (DMV Form REG 227) and reverse mortgage closing disclosures. Formally approves family reimbursement claims. |
+| **Laurie Salse** | **On-Site Care Coordinator & Primary Family Liaison** | On-scene staying with Renee in Sun City. Assesses day-to-day cognitive and physical safety, organizes physical mail/bills, and **escorts Renee in person to Chase Bank** to open a clean checking account and report fraud. Eligible for reverse mortgage reimbursement for on-scene advances. |
 | **Mark & Shelly Matthews** | **Financial Sponsors & Operational Administrators** | Advancing immediate capital to cure utility arrears and stop storage lien foreclosure. Managing debt settlement negotiations, maintaining the centralized encrypted ledger, and preparing reverse mortgage audit documentation. |
 
 ---
