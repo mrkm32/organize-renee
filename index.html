@@ -85,6 +85,10 @@
         <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn py-2.5 px-1 font-medium text-slate-600 hover:text-slate-900 border-b-2 border-transparent transition whitespace-nowrap tab-active">
           Dashboard
         </button>
+        <button onclick="switchTab('actions')" id="tab-actions" class="tab-btn py-2.5 px-1 font-medium text-slate-600 hover:text-slate-900 border-b-2 border-transparent transition whitespace-nowrap">
+          Action Items
+          <span id="uncompletedActionsBadge" class="ml-1.5 py-0.5 px-2 rounded-full text-xs bg-amber-100 text-amber-800 font-semibold">0</span>
+        </button>
         <button onclick="switchTab('bills')" id="tab-bills" class="tab-btn py-2.5 px-1 font-medium text-slate-600 hover:text-slate-900 border-b-2 border-transparent transition whitespace-nowrap">
           Bills & Arrears
           <span id="unpaidBillsCountBadge" class="ml-1.5 py-0.5 px-2 rounded-full text-xs bg-rose-100 text-rose-700 font-semibold">0</span>
@@ -188,28 +192,19 @@
             </div>
           </div>
 
-          <!-- Quick Action Checklist -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 pt-4 border-t border-amber-200/60">
-            <div class="bg-white/90 p-3 rounded-lg border border-amber-200 flex items-center justify-between">
-              <div>
-                <span class="text-[11px] font-bold text-rose-600 uppercase tracking-wide">Storage Lien Deadline</span>
-                <p class="text-xs font-semibold text-slate-800">Daytona Storage: Sept 7 ($750.00)</p>
-              </div>
-              <span class="px-2 py-0.5 text-[10px] font-bold bg-rose-100 text-rose-700 rounded">Urgent</span>
+          <!-- Top 3 Action Items Priorities -->
+          <div class="mt-4 pt-4 border-t border-amber-200/60">
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center">
+                <svg class="w-4 h-4 mr-1 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Top 3 Immediate Care & Debt Priorities
+              </span>
+              <button onclick="switchTab('actions')" class="text-xs text-amber-800 hover:text-amber-950 font-semibold flex items-center transition">
+                Manage & Prioritize All Action Items &rarr;
+              </button>
             </div>
-            <div class="bg-white/90 p-3 rounded-lg border border-amber-200 flex items-center justify-between">
-              <div>
-                <span class="text-[11px] font-bold text-amber-600 uppercase tracking-wide">Utility Arrears</span>
-                <p class="text-xs font-semibold text-slate-800">Edison, EMWD & Waste Mgmt ($1,059.37)</p>
-              </div>
-              <span class="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded">Past Due</span>
-            </div>
-            <div class="bg-white/90 p-3 rounded-lg border border-amber-200 flex items-center justify-between">
-              <div>
-                <span class="text-[11px] font-bold text-purple-600 uppercase tracking-wide">Tomorrow at Chase Bank</span>
-                <p class="text-xs font-semibold text-slate-800">Laurie & Renee Opening New Acct</p>
-              </div>
-              <span class="px-2 py-0.5 text-[10px] font-bold bg-purple-100 text-purple-700 rounded">Morning</span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="dashboardTopActionItems">
+              <!-- Injected via JS -->
             </div>
           </div>
         </div>
@@ -307,6 +302,34 @@
         </div>
       </section>
 
+      <!-- ================= TAB: ACTION ITEMS & PRIORITIES ================= -->
+      <section id="view-actions" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Action Items & Priorities</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Top prioritized action items automatically sync from bills and care milestones. Adjust priority rank (▲/▼) or add custom tasks below.</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="openAddActionItemModal()" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition">
+              <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              + Add Action Item
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="flex items-center space-x-2 border-b border-slate-200 pb-3 overflow-x-auto text-xs font-medium">
+          <button onclick="filterActionItems('all')" id="action-filter-all" class="px-3 py-1.5 rounded-lg bg-slate-800 text-white">All (<span id="action-count-all">0</span>)</button>
+          <button onclick="filterActionItems('pending')" id="action-filter-pending" class="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100">Pending / In Progress (<span id="action-count-pending">0</span>)</button>
+          <button onclick="filterActionItems('completed')" id="action-filter-completed" class="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100">Completed (<span id="action-count-completed">0</span>)</button>
+        </div>
+
+        <!-- Action Items List Container -->
+        <div id="actionItemsListContainer" class="space-y-3">
+          <!-- Injected via JS -->
+        </div>
+      </section>
+
       <!-- ================= TAB 2: BILLS & ARREARS ================= -->
       <section id="view-bills" class="hidden space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -315,7 +338,7 @@
             <p class="text-xs text-slate-500 mt-0.5">Pre-populated from Laurie's notes. When you pay a bill, it automatically logs your reimbursement claim.</p>
           </div>
           <div class="flex items-center space-x-2">
-            <button onclick="openAddBillModal()" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition">
+            <button onclick="openEditBillModal(null)" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition">
               <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               Add New Bill
             </button>
@@ -423,7 +446,7 @@
             <h2 class="text-xl font-bold text-slate-900">Vehicles & Storage Asset Manager</h2>
             <p class="text-xs text-slate-500 mt-0.5">Sam's vintage Ford vans, DMV renewals, and storage unit liquidation strategy.</p>
           </div>
-          <button onclick="openAddVehicleModal()" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition">
+          <button onclick="openEditVehicleModal(null)" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition">
             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Add Vehicle / Asset
           </button>
@@ -491,75 +514,9 @@
           </div>
         </div>
 
-        <!-- 3-Column Family Team Card -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Autumn Aguilar -->
-          <div class="bg-white p-5 rounded-xl border border-purple-200 shadow-sm space-y-2.5 ring-1 ring-purple-100">
-            <div class="flex items-center space-x-2 text-purple-700">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              <div>
-                <h3 class="font-bold text-sm text-slate-900 leading-tight">Autumn Aguilar</h3>
-                <span class="text-[10px] font-bold text-purple-700 uppercase tracking-wide">Legal Power of Attorney</span>
-              </div>
-            </div>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              <strong>Attorney-in-Fact:</strong> Legally in charge of executing official documents and authorizations for Renee Termine.
-            </p>
-            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside pt-1 border-t border-purple-50">
-              <li>Executes reverse mortgage closing disclosures and formal loan paperwork.</li>
-              <li>Executes vehicle title transfers (DMV REG 227) and Planned Non-Op (PNO).</li>
-              <li>Authorizes reverse mortgage reimbursement payments to Mark & Shelly and Laurie.</li>
-              <li>Serves as designated legal backup for institutional matters as needed.</li>
-            </ul>
-          </div>
-
-          <!-- Laurie Salse -->
-          <div class="bg-white p-5 rounded-xl border border-sky-200 shadow-sm space-y-2.5 ring-1 ring-sky-100">
-            <div class="flex items-center space-x-2 text-sky-700">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-              <div>
-                <h3 class="font-bold text-sm text-slate-900 leading-tight">Laurie Salse</h3>
-                <span class="text-[10px] font-bold text-sky-700 uppercase tracking-wide">On-Site Care Coordinator</span>
-              </div>
-            </div>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              <strong>On-Scene Assessment & Support:</strong> Currently staying with Renee in Sun City (traveling from Oregon) to provide daily care and gather intelligence.
-            </p>
-            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside pt-1 border-t border-sky-50">
-              <li><strong>Tomorrow's In-Person Priority:</strong> Accompanying Renee physically to Chase Bank to open a clean checking account directly in Renee's name and report the ~$1,200 debit fraud (keep it simple as mother and daughter; no POA needed).</li>
-              <li>Gathers and sorts incoming mail, past-due notices, and account numbers.</li>
-              <li>Assesses Renee's cognitive state, nutrition, medication, and home safety.</li>
-              <li>Tracks any on-scene out-of-pocket expenses for full reverse mortgage reimbursement.</li>
-            </ul>
-          </div>
-
-          <!-- Mark & Shelly Matthews -->
-          <div class="bg-white p-5 rounded-xl border border-emerald-200 shadow-sm space-y-2.5 ring-1 ring-emerald-100">
-            <div class="flex items-center space-x-2 text-emerald-700">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              <div>
-                <h3 class="font-bold text-sm text-slate-900 leading-tight">Mark & Shelly Matthews</h3>
-                <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wide">Financial Sponsors & Admins</span>
-              </div>
-            </div>
-            <p class="text-xs text-slate-600 leading-relaxed">
-              <strong>Capital Advances & Financial Systems:</strong> Funding immediate bills out-of-pocket and managing debt negotiations.
-            </p>
-            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside pt-1 border-t border-emerald-50">
-              <li>Advancing funds to cure utility arrears (Edison, EMWD) and stop Daytona storage lien.</li>
-              <li>Negotiating discounts with debt collectors (HOA) and healthcare providers.</li>
-              <li>Maintaining the centralized reimbursement ledger & audit documentation.</li>
-              <li>Supporting Autumn with call scripts and reverse mortgage liaison.</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Representative Calling Scripts & Checklists -->
-        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-4">
-          <h4 class="font-bold text-slate-900 text-sm">Institutional POA Filings & Calling Scripts</h4>
-          <div class="space-y-3" id="poaChecklistContainer">
-            <!-- Injected via JS -->
-          </div>
+        <!-- 3-Column Family Team Card (Dynamic & Editable) -->
+        <div id="familyRoleCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Injected via JS with Edit buttons -->
         </div>
 
         <!-- Renee's Medical & Pharmacy Coverage (Information to Keep) -->
@@ -998,43 +955,60 @@
     </div>
   </div>
 
-  <!-- Modal: Add Bill -->
-  <div id="addBillModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <!-- Modal: Add / Edit Bill -->
+  <div id="editBillModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-bold text-slate-900 text-base">Add Creditor / Bill</h3>
-        <button onclick="closeModal('addBillModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+        <h3 class="font-bold text-slate-900 text-base" id="editBillModalTitle">Add / Edit Creditor Bill</h3>
+        <button onclick="closeModal('editBillModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
       </div>
 
-      <form id="addBillForm" onsubmit="handleAddBillSubmit(event)" class="space-y-3 text-xs">
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Creditor / Payee Name *</label>
-          <input type="text" id="newBillCreditor" required placeholder="e.g. Gas Company" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+      <form id="editBillForm" onsubmit="handleSaveBill(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="editBillId" />
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Creditor / Payee Name *</label>
+            <input type="text" id="editBillCreditor" required placeholder="e.g. Edison, Waste Mgmt" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Category</label>
+            <select id="editBillCategory" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium">
+              <option value="Utilities">Utilities</option>
+              <option value="Storage & Lien">Storage & Lien</option>
+              <option value="HOA / Debt">HOA / Collections</option>
+              <option value="Medical">Medical</option>
+              <option value="Pharmacy">Pharmacy</option>
+              <option value="Bank Fraud">Bank Fraud Dispute</option>
+              <option value="Home Warranty">Home Warranty</option>
+              <option value="General Expense">General Expense</option>
+            </select>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Account / Policy #</label>
-            <input type="text" id="newBillAccount" placeholder="Acct #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+            <input type="text" id="editBillAccount" placeholder="Acct or Policy #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
           </div>
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Phone Number</label>
-            <input type="text" id="newBillPhone" placeholder="800-000-0000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+            <input type="text" id="editBillPhone" placeholder="800-000-0000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
           </div>
         </div>
 
         <div class="grid grid-cols-3 gap-3">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Amount Due ($) *</label>
-            <input type="number" step="0.01" id="newBillAmount" required placeholder="0.00" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-900" />
+            <input type="number" step="0.01" id="editBillAmount" required placeholder="0.00" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-900" />
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Due Date</label>
-            <input type="date" id="newBillDueDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+            <label class="block font-semibold text-slate-700 mb-1">Due Date / Status</label>
+            <input type="text" id="editBillDueDate" placeholder="e.g. 2026-09-07 or Due Now" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Priority</label>
-            <select id="newBillPriority" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
+            <label class="block font-semibold text-slate-700 mb-1">Priority Level</label>
+            <select id="editBillPriority" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-semibold">
               <option value="Critical">Critical</option>
               <option value="High">High</option>
               <option value="Medium">Medium</option>
@@ -1044,74 +1018,232 @@
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Notes / Instructions</label>
-          <textarea id="newBillNotes" rows="2" placeholder="Account history, contact person..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+          <label class="block font-semibold text-slate-700 mb-1">Status</label>
+          <select id="editBillStatus" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium">
+            <option value="Past Due">Past Due</option>
+            <option value="Due Soon">Due Soon</option>
+            <option value="In Collections">In Collections</option>
+            <option value="Past Due (Lien)">Past Due (Lien Notice)</option>
+            <option value="In Dispute">In Dispute / Fraud</option>
+            <option value="Pending">Pending</option>
+            <option value="Autopay">Autopay</option>
+            <option value="Paid">Paid</option>
+          </select>
         </div>
 
-        <div class="pt-3 flex justify-end space-x-2">
-          <button type="button" onclick="closeModal('addBillModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Save Bill</button>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Notes / Instructions</label>
+          <textarea id="editBillNotes" rows="3" placeholder="Dispute details, Laurie notes, contact person..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+        </div>
+
+        <div class="pt-3 flex justify-between items-center">
+          <button type="button" id="deleteBillBtn" onclick="deleteCurrentEditBill()" class="text-rose-600 hover:underline font-semibold hidden">Remove Bill</button>
+          <div class="flex space-x-2 ml-auto">
+            <button type="button" onclick="closeModal('editBillModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+            <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Save Bill</button>
+          </div>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Modal: Add Vehicle -->
-  <div id="addVehicleModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <!-- Modal: Add / Edit Vehicle -->
+  <div id="editVehicleModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-bold text-slate-900 text-base">Add Vehicle / Property</h3>
-        <button onclick="closeModal('addVehicleModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+        <h3 class="font-bold text-slate-900 text-base" id="editVehicleModalTitle">Add / Edit Vehicle</h3>
+        <button onclick="closeModal('editVehicleModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
       </div>
 
-      <form id="addVehicleForm" onsubmit="handleAddVehicleSubmit(event)" class="space-y-3 text-xs">
-        <div class="grid grid-cols-2 gap-3">
+      <form id="editVehicleForm" onsubmit="handleSaveVehicle(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="editVehicleId" />
+
+        <div class="grid grid-cols-3 gap-3">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Year & Make *</label>
-            <input type="text" id="vYearMake" required placeholder="e.g. 1966 Ford" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+            <label class="block font-semibold text-slate-700 mb-1">Year *</label>
+            <input type="text" id="editVYear" required placeholder="e.g. 1966" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
           </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Model / Body</label>
-            <input type="text" id="vModelBody" placeholder="e.g. Econoline Van" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          <div class="col-span-2">
+            <label class="block font-semibold text-slate-700 mb-1">Make & Model *</label>
+            <input type="text" id="editVMake" required placeholder="e.g. Ford Econoline Van" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Body Type</label>
+            <input type="text" id="editVBody" placeholder="e.g. Van, Wage 12, SV" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
           <div>
             <label class="block font-semibold text-slate-700 mb-1">License Plate</label>
-            <input type="text" id="vPlate" placeholder="Plate #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 uppercase" />
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">VIN</label>
-            <input type="text" id="vVin" placeholder="VIN #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 uppercase" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">DMV Renewal Fee ($)</label>
-            <input type="number" step="0.01" id="vFee" placeholder="0.00" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Renewal Due Date</label>
-            <input type="date" id="vDueDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+            <input type="text" id="editVPlate" placeholder="Plate #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 uppercase font-mono font-bold" />
           </div>
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Location & Disposition Status</label>
-          <select id="vStatus" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
-            <option value="In Storage (Daytona)">In Storage (Daytona RV & Boat)</option>
-            <option value="At Home (Sun City)">At Home (Sun City)</option>
-            <option value="File PNO (Planned Non-Op)">File PNO (Planned Non-Op)</option>
-            <option value="Prepare for Sale">Prepare for Sale</option>
-            <option value="Sold / Transferred">Sold / Transferred</option>
+          <label class="block font-semibold text-slate-700 mb-1">VIN Number</label>
+          <input type="text" id="editVVin" placeholder="VIN #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 uppercase font-mono" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">DMV Fee ($)</label>
+            <input type="number" step="0.01" id="editVFee" placeholder="0.00" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-bold" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">DMV Due Date</label>
+            <input type="text" id="editVDueDate" placeholder="e.g. 2026-10-16" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Current Location</label>
+            <input type="text" id="editVLocation" placeholder="e.g. In Storage (Daytona) or At Home" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">PNO / Disposition Status</label>
+            <input type="text" id="editVPnoStatus" placeholder="e.g. Eligible for PNO (~$25)" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Notes / Liquidation Plan</label>
+          <textarea id="editVNotes" rows="2" placeholder="Title signed by POA, buyer interest, collectible value..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+        </div>
+
+        <div class="pt-3 flex justify-between items-center">
+          <button type="button" id="deleteVehicleBtn" onclick="deleteCurrentEditVehicle()" class="text-rose-600 hover:underline font-semibold hidden">Delete Vehicle</button>
+          <div class="flex space-x-2 ml-auto">
+            <button type="button" onclick="closeModal('editVehicleModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+            <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Save Vehicle</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Family Team Role -->
+  <div id="editRoleModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Edit Care Team Role</h3>
+        <button onclick="closeModal('editRoleModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <form id="editRoleForm" onsubmit="handleSaveRole(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="editRoleId" />
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Member / Group Name *</label>
+            <input type="text" id="editRoleName" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Designated Title *</label>
+            <input type="text" id="editRoleTitle" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Card Accent Color</label>
+          <select id="editRoleColor" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium">
+            <option value="purple">Purple (Legal / POA)</option>
+            <option value="sky">Sky Blue (On-Site Care)</option>
+            <option value="emerald">Emerald (Financial / Admin)</option>
+            <option value="amber">Amber</option>
+            <option value="indigo">Indigo</option>
           </select>
         </div>
 
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Authority & Summary Description</label>
+          <textarea id="editRoleSummary" rows="2" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Key Responsibilities (One bullet per line)</label>
+          <textarea id="editRoleBullets" rows="5" placeholder="Enter one responsibility per line..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-sans text-xs"></textarea>
+        </div>
+
         <div class="pt-3 flex justify-end space-x-2">
-          <button type="button" onclick="closeModal('addVehicleModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Save Vehicle</button>
+          <button type="button" onclick="closeModal('editRoleModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Save Role</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add / Edit Action Item -->
+  <div id="actionItemModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base" id="actionItemModalTitle">Add / Edit Action Item</h3>
+        <button onclick="closeModal('actionItemModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <form id="actionItemForm" onsubmit="handleSaveActionItem(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="actionItemId" />
+        <input type="hidden" id="actionItemLinkedBillId" />
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Action Title *</label>
+          <input type="text" id="actionItemTitle" required placeholder="e.g. Visit Chase Bank branch" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Due Date / Deadline</label>
+            <input type="text" id="actionItemDueDate" placeholder="e.g. 2026-09-07 or Immediate" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Priority Level</label>
+            <select id="actionItemPriority" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-semibold">
+              <option value="Critical">Critical (Red)</option>
+              <option value="High">High (Amber)</option>
+              <option value="Medium">Medium (Blue)</option>
+              <option value="Low">Low (Gray)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Assigned Person / Team</label>
+            <input type="text" id="actionItemAssignee" placeholder="e.g. Laurie, Autumn, Mark/Shelly" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Category / Tag</label>
+            <input type="text" id="actionItemCategory" placeholder="e.g. Utilities, Banking, DMV" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Status</label>
+            <select id="actionItemStatus" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Priority Rank (1 = Top)</label>
+            <input type="number" id="actionItemRank" min="1" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-bold" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Details & Instructions</label>
+          <textarea id="actionItemDescription" rows="3" placeholder="Context, phone numbers, what needs to be done..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+        </div>
+
+        <div class="pt-3 flex justify-between items-center">
+          <button type="button" id="deleteActionItemBtn" onclick="deleteCurrentActionItem()" class="text-rose-600 hover:underline font-semibold hidden">Delete Action Item</button>
+          <div class="flex space-x-2 ml-auto">
+            <button type="button" onclick="closeModal('actionItemModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+            <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Save Action Item</button>
+          </div>
         </div>
       </form>
     </div>
@@ -1148,9 +1280,9 @@
   <script>
     /* ================= DEFAULT PRE-POPULATED DATA ================= */
     const ENCRYPTED_INITIAL_VAULT = {
-  "salt": "VYuzXYrMi876GIdYaVMsfw==",
-  "iv": "wW81+6wcqDjdxMsW",
-  "data": "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",
+  "salt": "2laR3a2awAg8KeJ5dPvQCQ==",
+  "iv": "ATAaTC6u3MTyvGns",
+  "data": "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",
   "version": "1.0"
 };
 
@@ -1263,7 +1395,7 @@
           const payload = JSON.parse(existingVaultStr);
           restoredState = await decryptPayload(payload, pass);
 
-          // Auto-merge newly added default bills from master vault
+          // Auto-merge newly added default bills, action items, and team roles from master vault
           try {
             const masterState = await decryptPayload(ENCRYPTED_INITIAL_VAULT, pass);
             if (masterState && masterState.bills) {
@@ -1273,8 +1405,14 @@
                 }
               });
             }
+            if (masterState && masterState.actionItems && (!restoredState.actionItems || restoredState.actionItems.length === 0)) {
+              restoredState.actionItems = JSON.parse(JSON.stringify(masterState.actionItems));
+            }
+            if (masterState && masterState.teamRoles && (!restoredState.teamRoles || restoredState.teamRoles.length === 0)) {
+              restoredState.teamRoles = JSON.parse(JSON.stringify(masterState.teamRoles));
+            }
           } catch (mErr) {
-            console.warn("Could not merge master vault bills:", mErr);
+            console.warn("Could not merge master vault data:", mErr);
           }
         } else {
           // Decrypt the pre-encrypted initial family vault
@@ -1338,6 +1476,136 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    /* ================= DEFAULT TEMPLATES ================= */
+    const DEFAULT_ACTION_ITEMS = [
+      {
+        id: "ACT-001",
+        title: "Chase Bank In-Person Visit",
+        description: "Laurie and Renee visit local branch with Samuel's death certificate to open a clean checking account and submit Regulation E dispute for ~$1,200.",
+        dueDate: "Immediate",
+        priority: "Critical",
+        rank: 1,
+        status: "Pending",
+        assignedTo: "Laurie & Renee",
+        linkedBillId: "B08",
+        category: "Banking & Fraud"
+      },
+      {
+        id: "ACT-002",
+        title: "Pay Daytona Storage Lien ($750.00)",
+        description: "Make catch-up payment for space #01122 before Sept 7 deadline to stop foreclosure auction and preserve 2 vintage Ford vans.",
+        dueDate: "2026-09-07",
+        priority: "Critical",
+        rank: 2,
+        status: "Pending",
+        assignedTo: "Mark & Shelly",
+        linkedBillId: "B03",
+        category: "Storage Lien"
+      },
+      {
+        id: "ACT-003",
+        title: "Catch Up Utility Arrears (Edison & EMWD)",
+        description: "Pay Southern California Edison ($385.84) and EMWD Water ($369.13) to clear past-due notices and prevent service disruption.",
+        dueDate: "2026-09-02",
+        priority: "High",
+        rank: 3,
+        status: "Pending",
+        assignedTo: "Mark & Shelly",
+        linkedBillId: "B01",
+        category: "Utilities"
+      },
+      {
+        id: "ACT-004",
+        title: "Verify Waste Management Payment ($304.40)",
+        description: "Confirm whether $304.40 autopay cleared or failed before card closure. Note that Laurie removed 1 extra can to lower the ongoing monthly rate.",
+        dueDate: "Due Now",
+        priority: "High",
+        rank: 4,
+        status: "Pending",
+        assignedTo: "Family Care Team",
+        linkedBillId: "B09",
+        category: "Utilities"
+      },
+      {
+        id: "ACT-005",
+        title: "File DMV Planned Non-Operation (PNO) on Vans",
+        description: "File PNO online for 5 vintage vehicles at dmv.ca.gov (~$25/vehicle) before registration penalties escalate, saving ~$790.",
+        dueDate: "2026-09-30",
+        priority: "Medium",
+        rank: 5,
+        status: "Pending",
+        assignedTo: "Autumn (POA) & Mark",
+        linkedBillId: null,
+        category: "Vehicles & DMV"
+      },
+      {
+        id: "ACT-006",
+        title: "Negotiate Sun City HOA Debt Settlement ($724.94)",
+        description: "Contact collection agency for HOA balance and offer 50-60% lump-sum settlement (~$360-$430) with written zero-balance release for title.",
+        dueDate: "Pending",
+        priority: "Medium",
+        rank: 6,
+        status: "Pending",
+        assignedTo: "Mark & Shelly",
+        linkedBillId: "B04",
+        category: "HOA Collections"
+      },
+      {
+        id: "ACT-007",
+        title: "Reverse Mortgage Document & Escrow Coordination",
+        description: "Submit certified POA letters and ensure title / escrow has clean payoff documentation as bills are cleared.",
+        dueDate: "Ongoing",
+        priority: "High",
+        rank: 7,
+        status: "Pending",
+        assignedTo: "Autumn (POA) & Mark",
+        linkedBillId: null,
+        category: "Reverse Mortgage"
+      }
+    ];
+
+    const DEFAULT_TEAM_ROLES = [
+      {
+        id: "role_autumn",
+        name: "Autumn Aguilar",
+        title: "Legal Power of Attorney",
+        badgeColor: "purple",
+        summary: "Attorney-in-Fact: Legally in charge of executing official documents and authorizations for Renee Termine.",
+        bullets: [
+          "Executes reverse mortgage closing disclosures and formal loan paperwork.",
+          "Executes vehicle title transfers (DMV REG 227) and Planned Non-Op (PNO).",
+          "Authorizes reverse mortgage reimbursement payments to Mark & Shelly and Laurie.",
+          "Serves as designated legal backup for institutional matters as needed."
+        ]
+      },
+      {
+        id: "role_laurie",
+        name: "Laurie Salse",
+        title: "On-Site Care Coordinator",
+        badgeColor: "sky",
+        summary: "On-Scene Assessment & Support: Currently staying with Renee in Sun City (traveling from Oregon) to provide daily care and gather intelligence.",
+        bullets: [
+          "Accompanying Renee physically to Chase Bank to open a clean checking account directly in Renee's name and report debit fraud.",
+          "Gathers and sorts incoming mail, past-due notices, and account numbers.",
+          "Assesses Renee's cognitive state, nutrition, medication, and home safety.",
+          "Tracks any on-scene out-of-pocket expenses for full reverse mortgage reimbursement."
+        ]
+      },
+      {
+        id: "role_mark_shelly",
+        name: "Mark & Shelly Matthews",
+        title: "Financial Sponsors & Admins",
+        badgeColor: "emerald",
+        summary: "Capital Advances & Financial Systems: Funding immediate bills out-of-pocket and managing debt negotiations.",
+        bullets: [
+          "Advancing funds to cure utility arrears (Edison, EMWD, WM) and stop Daytona storage lien.",
+          "Negotiating discounts with debt collectors (HOA) and healthcare providers.",
+          "Maintaining the centralized reimbursement ledger & audit documentation.",
+          "Supporting Autumn with reverse mortgage liaison and paperwork organization."
+        ]
+      }
+    ];
+
     /* ================= DATA RENDERING ================= */
     function renderAllViews() {
       if (!currentVaultState) return;
@@ -1365,14 +1633,30 @@
           ],
           notes: "Trash service. Acct #957-247172, Cust ID #00009-57558-15005. Laurie removed 1 can to reduce costs. Confirm payment status with bank."
         });
-        if (typeof persistVault === "function") persistVault();
       }
 
+      // Auto-initialize actionItems if missing
+      if (!currentVaultState.actionItems || currentVaultState.actionItems.length === 0) {
+        currentVaultState.actionItems = JSON.parse(JSON.stringify(DEFAULT_ACTION_ITEMS));
+      }
+
+      // Auto-initialize teamRoles if missing
+      if (!currentVaultState.teamRoles || currentVaultState.teamRoles.length === 0) {
+        currentVaultState.teamRoles = JSON.parse(JSON.stringify(DEFAULT_TEAM_ROLES));
+      }
+
+      // Sync bills with action items
+      syncBillsToActionItems();
+
+      if (typeof persistVault === "function") persistVault();
+
       renderDashboard();
+      renderDashboardTopActionItems();
+      renderActionItems();
       renderBills();
       renderLedger();
       renderVehicles();
-      renderPOACenter();
+      renderCareTeam();
     }
 
     function formatMoney(amount) {
@@ -1475,6 +1759,323 @@
     }
 
     /* ================= BILLS MANAGEMENT ================= */
+    /* ================= ACTION ITEMS & PRIORITIES ================= */
+    let currentActionFilter = "pending";
+
+    function filterActionItems(filter) {
+      currentActionFilter = filter;
+      document.querySelectorAll("#view-actions .border-b button").forEach(btn => {
+        btn.className = "px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-100";
+      });
+      const activeBtn = document.getElementById("action-filter-" + filter);
+      if (activeBtn) activeBtn.className = "px-3 py-1.5 rounded-lg bg-slate-800 text-white font-semibold";
+      renderActionItems();
+    }
+
+    function syncBillsToActionItems() {
+      if (!currentVaultState || !currentVaultState.bills || !currentVaultState.actionItems) return;
+
+      currentVaultState.bills.forEach(bill => {
+        let action = currentVaultState.actionItems.find(a => a.linkedBillId === bill.id);
+
+        if (action) {
+          if (bill.status === "Paid" && action.status !== "Completed") {
+            action.status = "Completed";
+          }
+        } else if (bill.dueDate && bill.status !== "Paid" && bill.status !== "Autopay") {
+          const nextRank = currentVaultState.actionItems.length + 1;
+          currentVaultState.actionItems.push({
+            id: "ACT-" + Date.now().toString().slice(-4) + Math.floor(Math.random() * 100),
+            title: `Pay ${bill.creditor} (${formatMoney(bill.amount)})`,
+            description: `Bill due: ${bill.dueDate}. Account: ${bill.accountNum || 'N/A'}. Priority: ${bill.priority}.`,
+            dueDate: bill.dueDate,
+            priority: bill.priority || "High",
+            rank: nextRank,
+            status: "Pending",
+            assignedTo: "Family Care Team",
+            linkedBillId: bill.id,
+            category: bill.category || "Utilities"
+          });
+        }
+      });
+    }
+
+    function renderDashboardTopActionItems() {
+      const container = document.getElementById("dashboardTopActionItems");
+      if (!container || !currentVaultState) return;
+      container.innerHTML = "";
+
+      const pendingActions = (currentVaultState.actionItems || [])
+        .filter(a => a.status !== "Completed")
+        .sort((a, b) => (a.rank || 0) - (b.rank || 0));
+
+      const top3 = pendingActions.slice(0, 3);
+
+      if (top3.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-3 bg-white/90 p-4 rounded-xl border border-amber-200 text-center text-xs text-slate-500">
+            <p class="font-bold text-slate-800">🎉 All immediate action items completed!</p>
+            <button onclick="openAddActionItemModal()" class="mt-2 text-emerald-600 font-semibold hover:underline">+ Add New Action Item</button>
+          </div>
+        `;
+        return;
+      }
+
+      top3.forEach((act, idx) => {
+        let priorityBadge = "bg-rose-100 text-rose-700";
+        if (act.priority === "Critical") {
+          priorityBadge = "bg-rose-100 text-rose-700";
+        } else if (act.priority === "High") {
+          priorityBadge = "bg-amber-100 text-amber-800";
+        } else if (act.priority === "Medium") {
+          priorityBadge = "bg-sky-100 text-sky-800";
+        } else {
+          priorityBadge = "bg-slate-100 text-slate-700";
+        }
+
+        const catText = act.category || `Priority #${act.rank || idx + 1}`;
+
+        const card = document.createElement("div");
+        card.className = "bg-white/95 p-3.5 rounded-xl border border-amber-200/80 shadow-sm flex flex-col justify-between hover:border-amber-400 transition cursor-pointer group";
+        card.onclick = () => switchTab('actions');
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-[10px] font-black uppercase tracking-wider text-amber-700 truncate">#${act.rank || idx + 1} &bull; ${catText}</span>
+              <span class="px-2 py-0.5 text-[9px] font-bold rounded ${priorityBadge} shrink-0">${act.priority || 'Normal'}</span>
+            </div>
+            <h5 class="text-xs font-bold text-slate-900 group-hover:text-amber-800 transition line-clamp-1">${act.title}</h5>
+            <p class="text-[11px] text-slate-600 mt-0.5 line-clamp-2 leading-tight">${act.description || ''}</p>
+          </div>
+          <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
+            <span>Due: <strong class="text-slate-800">${act.dueDate || 'Pending'}</strong></span>
+            <span class="font-medium text-amber-700 group-hover:underline">View Details &rarr;</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderActionItems() {
+      const container = document.getElementById("actionItemsListContainer");
+      if (!container || !currentVaultState) return;
+      container.innerHTML = "";
+
+      const actions = (currentVaultState.actionItems || []).slice().sort((a, b) => (a.rank || 0) - (b.rank || 0));
+
+      const totalCount = actions.length;
+      const pendingCount = actions.filter(a => a.status !== "Completed").length;
+      const completedCount = actions.filter(a => a.status === "Completed").length;
+
+      if (document.getElementById("action-count-all")) document.getElementById("action-count-all").textContent = totalCount;
+      if (document.getElementById("action-count-pending")) document.getElementById("action-count-pending").textContent = pendingCount;
+      if (document.getElementById("action-count-completed")) document.getElementById("action-count-completed").textContent = completedCount;
+      if (document.getElementById("uncompletedActionsBadge")) document.getElementById("uncompletedActionsBadge").textContent = pendingCount;
+
+      let filtered = actions;
+      if (currentActionFilter === "pending") {
+        filtered = actions.filter(a => a.status !== "Completed");
+      } else if (currentActionFilter === "completed") {
+        filtered = actions.filter(a => a.status === "Completed");
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white p-8 rounded-xl border border-slate-200 text-center text-slate-500 text-xs space-y-2">
+            <p class="font-bold text-slate-700 text-sm">No action items in this view.</p>
+            <p>Click <strong>+ Add Action Item</strong> above to create a new task.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach((act, index) => {
+        const isCompleted = act.status === "Completed";
+        const priorityColors = {
+          Critical: "bg-rose-100 text-rose-800 border-rose-200",
+          High: "bg-amber-100 text-amber-800 border-amber-200",
+          Medium: "bg-sky-100 text-sky-800 border-sky-200",
+          Low: "bg-slate-100 text-slate-700 border-slate-200"
+        }[act.priority] || "bg-slate-100 text-slate-700 border-slate-200";
+
+        const card = document.createElement("div");
+        card.className = `bg-white p-4 rounded-xl border ${isCompleted ? 'border-slate-200 opacity-60 bg-slate-50/50' : 'border-slate-200 shadow-sm'} flex flex-col md:flex-row md:items-center justify-between gap-4 transition`;
+
+        card.innerHTML = `
+          <div class="flex items-start space-x-3 flex-1 min-w-0">
+            <!-- Complete Checkbox -->
+            <button onclick="toggleActionItemStatus('${act.id}')" class="mt-0.5 w-5 h-5 rounded border ${isCompleted ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 hover:border-emerald-500'} flex items-center justify-center transition shrink-0">
+              ${isCompleted ? '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>' : ''}
+            </button>
+
+            <!-- Rank indicator -->
+            <div class="flex flex-col items-center justify-center shrink-0 pr-1">
+              <span class="text-[10px] font-black text-slate-400">#${act.rank || index + 1}</span>
+              <div class="flex flex-col space-y-0.5 mt-0.5">
+                <button onclick="moveActionItem('${act.id}', 'up')" title="Move Priority Up" class="text-slate-400 hover:text-slate-800 text-[9px] p-0.5">▲</button>
+                <button onclick="moveActionItem('${act.id}', 'down')" title="Move Priority Down" class="text-slate-400 hover:text-slate-800 text-[9px] p-0.5">▼</button>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${priorityColors}">${act.priority || 'Normal'}</span>
+                ${act.category ? `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">${act.category}</span>` : ''}
+                ${act.assignedTo ? `<span class="text-[11px] font-semibold text-slate-500 flex items-center"><svg class="w-3 h-3 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>${act.assignedTo}</span>` : ''}
+                ${act.linkedBillId ? `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-100 cursor-pointer hover:bg-indigo-100" onclick="switchTab('bills')">Linked: ${act.linkedBillId}</span>` : ''}
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm ${isCompleted ? 'line-through text-slate-500' : ''}">${act.title}</h4>
+              ${act.description ? `<p class="text-xs text-slate-600 leading-relaxed">${act.description}</p>` : ''}
+            </div>
+          </div>
+
+          <!-- Right side: Deadline & Actions -->
+          <div class="flex items-center justify-between md:justify-end space-x-3 border-t md:border-t-0 pt-2 md:pt-0 border-slate-100 shrink-0">
+            <div class="text-left md:text-right">
+              <span class="text-[10px] uppercase font-bold text-slate-400 block">Due Date</span>
+              <span class="text-xs font-bold ${act.dueDate === 'Immediate' || act.dueDate === 'Due Now' ? 'text-rose-600' : 'text-slate-800'}">${act.dueDate || 'Pending'}</span>
+            </div>
+            <div class="flex items-center space-x-1.5">
+              <button onclick="openEditActionItemModal('${act.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-semibold border border-slate-200 transition">
+                Edit
+              </button>
+              <button onclick="deleteActionItem('${act.id}')" class="text-slate-400 hover:text-rose-600 p-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    async function moveActionItem(actionId, direction) {
+      if (!currentVaultState || !currentVaultState.actionItems) return;
+      const items = currentVaultState.actionItems.slice().sort((a, b) => (a.rank || 0) - (b.rank || 0));
+      const idx = items.findIndex(a => a.id === actionId);
+      if (idx === -1) return;
+
+      if (direction === 'up' && idx > 0) {
+        const temp = items[idx - 1];
+        items[idx - 1] = items[idx];
+        items[idx] = temp;
+      } else if (direction === 'down' && idx < items.length - 1) {
+        const temp = items[idx + 1];
+        items[idx + 1] = items[idx];
+        items[idx] = temp;
+      } else {
+        return;
+      }
+
+      items.forEach((item, index) => {
+        item.rank = index + 1;
+      });
+
+      currentVaultState.actionItems = items;
+      await persistVault();
+      renderAllViews();
+    }
+
+    async function toggleActionItemStatus(actionId) {
+      if (!currentVaultState || !currentVaultState.actionItems) return;
+      const act = currentVaultState.actionItems.find(a => a.id === actionId);
+      if (!act) return;
+
+      act.status = act.status === "Completed" ? "Pending" : "Completed";
+      await persistVault();
+      renderAllViews();
+    }
+
+    function openAddActionItemModal() {
+      const form = document.getElementById("actionItemForm");
+      form.reset();
+      document.getElementById("actionItemModalTitle").textContent = "Add Action Item";
+      document.getElementById("actionItemId").value = "";
+      document.getElementById("actionItemLinkedBillId").value = "";
+      document.getElementById("actionItemPriority").value = "High";
+      document.getElementById("actionItemStatus").value = "Pending";
+      document.getElementById("actionItemRank").value = (currentVaultState.actionItems ? currentVaultState.actionItems.length + 1 : 1);
+      document.getElementById("deleteActionItemBtn").classList.add("hidden");
+      document.getElementById("actionItemModal").classList.remove("hidden");
+    }
+
+    function openEditActionItemModal(actionId) {
+      const act = (currentVaultState.actionItems || []).find(a => a.id === actionId);
+      if (!act) return;
+
+      document.getElementById("actionItemModalTitle").textContent = "Edit Action Item";
+      document.getElementById("actionItemId").value = act.id;
+      document.getElementById("actionItemLinkedBillId").value = act.linkedBillId || "";
+      document.getElementById("actionItemTitle").value = act.title || "";
+      document.getElementById("actionItemDueDate").value = act.dueDate || "";
+      document.getElementById("actionItemPriority").value = act.priority || "High";
+      document.getElementById("actionItemAssignee").value = act.assignedTo || "";
+      document.getElementById("actionItemCategory").value = act.category || "";
+      document.getElementById("actionItemStatus").value = act.status || "Pending";
+      document.getElementById("actionItemRank").value = act.rank || 1;
+      document.getElementById("actionItemDescription").value = act.description || "";
+
+      document.getElementById("deleteActionItemBtn").classList.remove("hidden");
+      document.getElementById("actionItemModal").classList.remove("hidden");
+    }
+
+    async function handleSaveActionItem(e) {
+      e.preventDefault();
+      const actionId = document.getElementById("actionItemId").value;
+      if (!currentVaultState.actionItems) currentVaultState.actionItems = [];
+
+      let act = actionId ? currentVaultState.actionItems.find(a => a.id === actionId) : null;
+      const isNew = !act;
+
+      if (isNew) {
+        act = {
+          id: "ACT-" + Date.now().toString().slice(-6),
+          linkedBillId: document.getElementById("actionItemLinkedBillId").value || null
+        };
+        currentVaultState.actionItems.push(act);
+      }
+
+      act.title = document.getElementById("actionItemTitle").value.trim();
+      act.dueDate = document.getElementById("actionItemDueDate").value.trim() || "Pending";
+      act.priority = document.getElementById("actionItemPriority").value;
+      act.assignedTo = document.getElementById("actionItemAssignee").value.trim();
+      act.category = document.getElementById("actionItemCategory").value.trim();
+      act.status = document.getElementById("actionItemStatus").value;
+      act.rank = parseInt(document.getElementById("actionItemRank").value) || currentVaultState.actionItems.length;
+      act.description = document.getElementById("actionItemDescription").value.trim();
+
+      // Normalize ranks
+      currentVaultState.actionItems.sort((a, b) => (a.rank || 0) - (b.rank || 0));
+      currentVaultState.actionItems.forEach((item, index) => {
+        item.rank = index + 1;
+      });
+
+      await persistVault();
+      closeModal("actionItemModal");
+      renderAllViews();
+    }
+
+    async function deleteActionItem(actionId) {
+      if (confirm("Delete this action item?")) {
+        currentVaultState.actionItems = (currentVaultState.actionItems || []).filter(a => a.id !== actionId);
+        currentVaultState.actionItems.forEach((item, index) => {
+          item.rank = index + 1;
+        });
+        await persistVault();
+        renderAllViews();
+      }
+    }
+
+    async function deleteCurrentActionItem() {
+      const actionId = document.getElementById("actionItemId").value;
+      if (!actionId) return;
+      closeModal("actionItemModal");
+      await deleteActionItem(actionId);
+    }
+
+    /* ================= BILLS & ARREARS ================= */
     let currentBillFilter = "all";
 
     function filterBills(filter) {
@@ -1574,6 +2175,10 @@
           <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
             <div class="flex items-center space-x-2">
               <button onclick="deleteBill('${b.id}')" class="text-[11px] text-slate-400 hover:text-rose-600">Remove</button>
+              <button onclick="openEditBillModal('${b.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold border border-slate-300 transition flex items-center">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Edit
+              </button>
               <button onclick="openSettlementModal('${b.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold border border-indigo-200 transition flex items-center">
                 <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                 Negotiate / Notes ${(b.negotiationNotes && b.negotiationNotes.length > 0) ? `(${b.negotiationNotes.length})` : ''}
@@ -1728,6 +2333,14 @@
         bill.settlementStatus = "Settled for Less & Paid";
       }
 
+      // Mark any linked action item as Completed
+      if (currentVaultState.actionItems) {
+        const linkedAct = currentVaultState.actionItems.find(a => a.linkedBillId === bill.id);
+        if (linkedAct) {
+          linkedAct.status = "Completed";
+        }
+      }
+
       // If paid by Mark & Shelly or Laurie, add to Reimbursement Ledger!
       if (paidBy !== "Renee's Funds") {
         const claimId = "CLM-" + Date.now().toString().slice(-6);
@@ -1772,30 +2385,79 @@
       }
     }
 
-    function openAddBillModal() {
-      document.getElementById("addBillForm").reset();
-      document.getElementById("addBillModal").classList.remove("hidden");
+    function openEditBillModal(billId) {
+      const form = document.getElementById("editBillForm");
+      form.reset();
+      const delBtn = document.getElementById("deleteBillBtn");
+
+      if (billId) {
+        const bill = currentVaultState.bills.find(b => b.id === billId);
+        if (!bill) return;
+        document.getElementById("editBillModalTitle").textContent = "Edit Creditor Bill (" + bill.creditor + ")";
+        document.getElementById("editBillId").value = bill.id;
+        document.getElementById("editBillCreditor").value = bill.creditor || "";
+        document.getElementById("editBillCategory").value = bill.category || "Utilities";
+        document.getElementById("editBillAccount").value = bill.accountNum || "";
+        document.getElementById("editBillPhone").value = bill.phone || "";
+        document.getElementById("editBillAmount").value = bill.amount || 0;
+        document.getElementById("editBillDueDate").value = bill.dueDate || "";
+        document.getElementById("editBillPriority").value = bill.priority || "High";
+        document.getElementById("editBillStatus").value = bill.status || "Past Due";
+        document.getElementById("editBillNotes").value = bill.notes || "";
+        if (delBtn) delBtn.classList.remove("hidden");
+      } else {
+        document.getElementById("editBillModalTitle").textContent = "Add Creditor / Bill";
+        document.getElementById("editBillId").value = "";
+        document.getElementById("editBillCategory").value = "Utilities";
+        document.getElementById("editBillPriority").value = "High";
+        document.getElementById("editBillStatus").value = "Past Due";
+        if (delBtn) delBtn.classList.add("hidden");
+      }
+
+      document.getElementById("editBillModal").classList.remove("hidden");
     }
 
-    async function handleAddBillSubmit(e) {
+    async function handleSaveBill(e) {
       e.preventDefault();
-      const newBill = {
-        id: "B" + Date.now().toString().slice(-4),
-        creditor: document.getElementById("newBillCreditor").value.trim(),
-        accountNum: document.getElementById("newBillAccount").value.trim(),
-        phone: document.getElementById("newBillPhone").value.trim(),
-        amount: parseFloat(document.getElementById("newBillAmount").value) || 0,
-        dueDate: document.getElementById("newBillDueDate").value || "Pending",
-        priority: document.getElementById("newBillPriority").value,
-        category: "General Expense",
-        status: "Past Due",
-        notes: document.getElementById("newBillNotes").value.trim()
-      };
+      const billId = document.getElementById("editBillId").value;
+      let bill = billId ? currentVaultState.bills.find(b => b.id === billId) : null;
+      const isNew = !bill;
 
-      currentVaultState.bills.push(newBill);
+      if (isNew) {
+        bill = {
+          id: "B" + Date.now().toString().slice(-4),
+          negotiationNotes: []
+        };
+        currentVaultState.bills.push(bill);
+      }
+
+      bill.creditor = document.getElementById("editBillCreditor").value.trim();
+      bill.category = document.getElementById("editBillCategory").value;
+      bill.accountNum = document.getElementById("editBillAccount").value.trim();
+      bill.phone = document.getElementById("editBillPhone").value.trim();
+      bill.amount = parseFloat(document.getElementById("editBillAmount").value) || 0;
+      bill.dueDate = document.getElementById("editBillDueDate").value.trim() || "Pending";
+      bill.priority = document.getElementById("editBillPriority").value;
+      bill.status = document.getElementById("editBillStatus").value;
+      bill.notes = document.getElementById("editBillNotes").value.trim();
+
+      syncBillsToActionItems();
+
       await persistVault();
-      closeModal("addBillModal");
+      closeModal("editBillModal");
       renderAllViews();
+    }
+
+    async function deleteCurrentEditBill() {
+      const billId = document.getElementById("editBillId").value;
+      if (!billId) return;
+      if (confirm("Are you sure you want to remove this bill?")) {
+        currentVaultState.bills = currentVaultState.bills.filter(b => b.id !== billId);
+        currentVaultState.actionItems = (currentVaultState.actionItems || []).filter(a => a.linkedBillId !== billId);
+        await persistVault();
+        closeModal("editBillModal");
+        renderAllViews();
+      }
     }
 
     /* ================= REIMBURSEMENT LEDGER ================= */
@@ -1976,7 +2638,12 @@
           </div>
 
           <div class="pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
-            <button onclick="deleteVehicle('${v.id}')" class="text-slate-400 hover:text-rose-600 text-[11px]">Delete</button>
+            <div class="flex items-center space-x-2">
+              <button onclick="deleteVehicle('${v.id}')" class="text-slate-400 hover:text-rose-600 text-[11px]">Delete</button>
+              <button onclick="openEditVehicleModal('${v.id}')" class="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded border border-slate-300 font-semibold text-[11px] transition">
+                Edit
+              </button>
+            </div>
             <a href="https://www.dmv.ca.gov/portal/vehicle-registration/vehicle-registration-renewal/planned-non-operation-pno/" target="_blank" class="px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded font-semibold transition">
               File PNO Online &rarr;
             </a>
@@ -1986,31 +2653,73 @@
       });
     }
 
-    function openAddVehicleModal() {
-      document.getElementById("addVehicleForm").reset();
-      document.getElementById("addVehicleModal").classList.remove("hidden");
+    function openEditVehicleModal(vId) {
+      const form = document.getElementById("editVehicleForm");
+      form.reset();
+      const delBtn = document.getElementById("deleteVehicleBtn");
+
+      if (vId) {
+        const v = currentVaultState.vehicles.find(item => item.id === vId);
+        if (!v) return;
+        document.getElementById("editVehicleModalTitle").textContent = "Edit Vehicle (" + v.year + " " + v.make + ")";
+        document.getElementById("editVehicleId").value = v.id;
+        document.getElementById("editVYear").value = v.year || "";
+        document.getElementById("editVMake").value = v.make || "";
+        document.getElementById("editVBody").value = v.bodyType || "";
+        document.getElementById("editVPlate").value = v.plate || "";
+        document.getElementById("editVVin").value = v.vin || "";
+        document.getElementById("editVFee").value = v.fee || 0;
+        document.getElementById("editVDueDate").value = v.dueDate || "";
+        document.getElementById("editVLocation").value = v.location || "";
+        document.getElementById("editVPnoStatus").value = v.pnoStatus || "Eligible for PNO (~$25)";
+        document.getElementById("editVNotes").value = v.notes || "";
+        if (delBtn) delBtn.classList.remove("hidden");
+      } else {
+        document.getElementById("editVehicleModalTitle").textContent = "Add Vehicle / Property";
+        document.getElementById("editVehicleId").value = "";
+        document.getElementById("editVPnoStatus").value = "Eligible for PNO (~$25)";
+        if (delBtn) delBtn.classList.add("hidden");
+      }
+
+      document.getElementById("editVehicleModal").classList.remove("hidden");
     }
 
-    async function handleAddVehicleSubmit(e) {
+    async function handleSaveVehicle(e) {
       e.preventDefault();
-      const newV = {
-        id: "V" + Date.now().toString().slice(-4),
-        year: document.getElementById("vYearMake").value.split(" ")[0] || "1960s",
-        make: document.getElementById("vYearMake").value.trim(),
-        bodyType: document.getElementById("vModelBody").value.trim() || "Van",
-        plate: document.getElementById("vPlate").value.trim(),
-        vin: document.getElementById("vVin").value.trim(),
-        fee: parseFloat(document.getElementById("vFee").value) || 0,
-        dueDate: document.getElementById("vDueDate").value || "Pending",
-        location: document.getElementById("vStatus").value,
-        pnoStatus: "Eligible for PNO (~$25)",
-        notes: ""
-      };
+      const vId = document.getElementById("editVehicleId").value;
+      let v = vId ? currentVaultState.vehicles.find(item => item.id === vId) : null;
+      const isNew = !v;
 
-      currentVaultState.vehicles.push(newV);
+      if (isNew) {
+        v = { id: "V" + Date.now().toString().slice(-4) };
+        currentVaultState.vehicles.push(v);
+      }
+
+      v.year = document.getElementById("editVYear").value.trim();
+      v.make = document.getElementById("editVMake").value.trim();
+      v.bodyType = document.getElementById("editVBody").value.trim();
+      v.plate = document.getElementById("editVPlate").value.trim().toUpperCase();
+      v.vin = document.getElementById("editVVin").value.trim().toUpperCase();
+      v.fee = parseFloat(document.getElementById("editVFee").value) || 0;
+      v.dueDate = document.getElementById("editVDueDate").value.trim() || "Pending";
+      v.location = document.getElementById("editVLocation").value.trim();
+      v.pnoStatus = document.getElementById("editVPnoStatus").value.trim();
+      v.notes = document.getElementById("editVNotes").value.trim();
+
       await persistVault();
-      closeModal("addVehicleModal");
+      closeModal("editVehicleModal");
       renderAllViews();
+    }
+
+    async function deleteCurrentEditVehicle() {
+      const vId = document.getElementById("editVehicleId").value;
+      if (!vId) return;
+      if (confirm("Are you sure you want to delete this vehicle record?")) {
+        currentVaultState.vehicles = currentVaultState.vehicles.filter(v => v.id !== vId);
+        await persistVault();
+        closeModal("editVehicleModal");
+        renderAllViews();
+      }
     }
 
     async function deleteVehicle(vId) {
@@ -2021,35 +2730,94 @@
       }
     }
 
-    /* ================= AUTUMN'S POA & CARE ================= */
-    function renderPOACenter() {
-      if (!currentVaultState) return;
-
-      const container = document.getElementById("poaChecklistContainer");
+    /* ================= FAMILY ROLES & CARE TEAM ================= */
+    function renderCareTeam() {
+      const container = document.getElementById("familyRoleCardsContainer");
+      if (!container || !currentVaultState) return;
       container.innerHTML = "";
 
-      currentVaultState.poaTasks.forEach(task => {
-        const item = document.createElement("div");
-        item.className = "p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2 text-xs";
-        item.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="font-bold text-slate-900 text-sm">${task.institution}</span>
-              <span class="text-slate-500 ml-2">&bull; ${task.purpose}</span>
+      const roles = (currentVaultState.teamRoles && currentVaultState.teamRoles.length > 0)
+        ? currentVaultState.teamRoles
+        : DEFAULT_TEAM_ROLES;
+
+      roles.forEach(r => {
+        const color = r.badgeColor || "purple";
+        const colorMap = {
+          purple: { border: "border-purple-200", ring: "ring-purple-100", text: "text-purple-700", badge: "text-purple-700 bg-purple-50", borderT: "border-purple-50" },
+          sky: { border: "border-sky-200", ring: "ring-sky-100", text: "text-sky-700", badge: "text-sky-700 bg-sky-50", borderT: "border-sky-50" },
+          emerald: { border: "border-emerald-200", ring: "ring-emerald-100", text: "text-emerald-700", badge: "text-emerald-700 bg-emerald-50", borderT: "border-emerald-50" },
+          amber: { border: "border-amber-200", ring: "ring-amber-100", text: "text-amber-700", badge: "text-amber-700 bg-amber-50", borderT: "border-amber-50" },
+          indigo: { border: "border-indigo-200", ring: "ring-indigo-100", text: "text-indigo-700", badge: "text-indigo-700 bg-indigo-50", borderT: "border-indigo-50" }
+        };
+        const c = colorMap[color] || colorMap.purple;
+
+        const card = document.createElement("div");
+        card.className = `bg-white p-5 rounded-xl border ${c.border} shadow-sm space-y-2.5 ring-1 ${c.ring} flex flex-col justify-between`;
+
+        const bulletsHtml = (r.bullets || [])
+          .map(b => `<li>${b}</li>`)
+          .join("");
+
+        card.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2 ${c.text}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <div>
+                  <h3 class="font-bold text-sm text-slate-900 leading-tight">${r.name}</h3>
+                  <span class="text-[10px] font-bold ${c.badge} uppercase tracking-wide px-1.5 py-0.5 rounded">${r.title}</span>
+                </div>
+              </div>
+              <button onclick="openEditRoleModal('${r.id}')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-semibold border border-slate-200 flex items-center transition">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Edit Role
+              </button>
             </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">${task.status}</span>
+            ${r.summary ? `<p class="text-xs text-slate-600 leading-relaxed">${r.summary}</p>` : ''}
+            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside pt-1 border-t ${c.borderT}">
+              ${bulletsHtml}
+            </ul>
           </div>
-
-          <p class="text-slate-600">${task.details}</p>
-
-          ${task.script ? `
-          <div class="bg-white p-3 rounded-lg border border-slate-200 text-slate-700">
-            <span class="font-bold text-purple-700 block mb-1">📞 Representative Calling Script:</span>
-            <p class="italic">${task.script}</p>
-          </div>` : ''}
         `;
-        container.appendChild(item);
+        container.appendChild(card);
       });
+    }
+
+    function openEditRoleModal(roleId) {
+      const role = (currentVaultState.teamRoles || DEFAULT_TEAM_ROLES).find(r => r.id === roleId);
+      if (!role) return;
+
+      document.getElementById("editRoleId").value = role.id;
+      document.getElementById("editRoleName").value = role.name || "";
+      document.getElementById("editRoleTitle").value = role.title || "";
+      document.getElementById("editRoleColor").value = role.badgeColor || "purple";
+      document.getElementById("editRoleSummary").value = role.summary || "";
+      document.getElementById("editRoleBullets").value = (role.bullets || []).join("\n");
+
+      document.getElementById("editRoleModal").classList.remove("hidden");
+    }
+
+    async function handleSaveRole(e) {
+      e.preventDefault();
+      const roleId = document.getElementById("editRoleId").value;
+      if (!currentVaultState.teamRoles) {
+        currentVaultState.teamRoles = JSON.parse(JSON.stringify(DEFAULT_TEAM_ROLES));
+      }
+      let role = currentVaultState.teamRoles.find(r => r.id === roleId);
+      if (!role) return;
+
+      role.name = document.getElementById("editRoleName").value.trim();
+      role.title = document.getElementById("editRoleTitle").value.trim();
+      role.badgeColor = document.getElementById("editRoleColor").value;
+      role.summary = document.getElementById("editRoleSummary").value.trim();
+      role.bullets = document.getElementById("editRoleBullets").value
+        .split("\n")
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      await persistVault();
+      closeModal("editRoleModal");
+      renderAllViews();
     }
 
     /* ================= EXPORT & BACKUP ================= */
