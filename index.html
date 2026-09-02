@@ -531,7 +531,13 @@
                 <p class="text-[11px] text-slate-500">Information to keep for doctor appointments, hospital care, and prescription billing.</p>
               </div>
             </div>
-            <span class="px-2.5 py-1 text-[10px] font-bold bg-sky-100 text-sky-800 rounded-full">Anthem Active</span>
+            <div class="flex items-center space-x-2">
+              <span id="insBadgeStatus" class="px-2.5 py-1 text-[10px] font-bold bg-sky-100 text-sky-800 rounded-full">Anthem Active</span>
+              <button onclick="openEditInsuranceModal()" class="px-2.5 py-1 bg-white hover:bg-sky-50 text-sky-800 rounded-lg text-xs font-semibold border border-sky-200 shadow-sm flex items-center transition">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Edit Info
+              </button>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-1">
@@ -539,10 +545,10 @@
             <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-2">
               <span class="font-bold text-slate-800 uppercase tracking-wider text-[10px] text-sky-700 block">Health Plan Details</span>
               <div class="space-y-1.5">
-                <div class="flex justify-between"><span class="text-slate-500">Plan Name:</span><span class="font-semibold text-slate-800">Anthem Prime (HMO-POS)</span></div>
-                <div class="flex justify-between"><span class="text-slate-500">Partnership:</span><span class="font-semibold text-slate-800">Anthem Blue Cross Partnership Plan</span></div>
-                <div class="flex justify-between items-center"><span class="text-slate-500">Member ID:</span><span class="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-sm">489W25457</span></div>
-                <div class="flex justify-between"><span class="text-slate-500">Phone:</span><a href="tel:8337073130" class="font-bold text-sky-700 hover:underline">833-707-3130</a></div>
+                <div class="flex justify-between"><span class="text-slate-500">Plan Name:</span><span id="insPlanNameDisplay" class="font-semibold text-slate-800">Anthem Prime (HMO-POS)</span></div>
+                <div class="flex justify-between"><span class="text-slate-500">Partnership:</span><span id="insPartnershipDisplay" class="font-semibold text-slate-800">Anthem Blue Cross Partnership Plan</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Member ID:</span><span id="insMemberIdDisplay" class="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-sm">489W25457</span></div>
+                <div class="flex justify-between"><span class="text-slate-500">Phone:</span><a id="insPhoneDisplay" href="tel:8337073130" class="font-bold text-sky-700 hover:underline">833-707-3130</a></div>
               </div>
             </div>
 
@@ -550,9 +556,9 @@
             <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-200 space-y-2">
               <span class="font-bold text-slate-800 uppercase tracking-wider text-[10px] text-purple-700 block">Pharmacy (Rx) Billing Codes</span>
               <div class="space-y-1.5">
-                <div class="flex justify-between items-center"><span class="text-slate-500">Rx Group:</span><span class="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-sm">WM2A</span></div>
-                <div class="flex justify-between items-center"><span class="text-slate-500">Rx BIN:</span><span class="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-sm">020115</span></div>
-                <div class="flex justify-between items-center"><span class="text-slate-500">Rx PCN:</span><span class="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-sm">IS</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Rx Group:</span><span id="insRxGroupDisplay" class="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-sm">WM2A</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Rx BIN:</span><span id="insRxBinDisplay" class="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-sm">020115</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Rx PCN:</span><span id="insRxPcnDisplay" class="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-sm">IS</span></div>
                 <div class="flex justify-between"><span class="text-slate-500">Connected To:</span><span class="font-semibold text-slate-700">Select LTC Pharmacy (B06)</span></div>
               </div>
             </div>
@@ -1249,6 +1255,64 @@
     </div>
   </div>
 
+  <!-- Modal: Edit Insurance Info -->
+  <div id="editInsuranceModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Edit Insurance & Pharmacy Information</h3>
+        <button onclick="closeModal('editInsuranceModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <form id="editInsuranceForm" onsubmit="handleSaveInsurance(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Plan Name *</label>
+          <input type="text" id="editInsPlanName" required placeholder="e.g. Anthem Prime (HMO-POS)" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Partnership / Insurer *</label>
+          <input type="text" id="editInsPartnership" required placeholder="e.g. Anthem Blue Cross Partnership Plan" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Member ID *</label>
+            <input type="text" id="editInsMemberId" required placeholder="Member ID #" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-mono font-bold" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Member Services Phone</label>
+            <input type="text" id="editInsPhone" placeholder="833-000-0000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Rx Group</label>
+            <input type="text" id="editInsRxGroup" placeholder="e.g. WM2A" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-mono font-bold" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Rx BIN</label>
+            <input type="text" id="editInsRxBin" placeholder="e.g. 020115" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-mono font-bold" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Rx PCN</label>
+            <input type="text" id="editInsRxPcn" placeholder="e.g. IS" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-mono font-bold" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Status / Badge Text</label>
+          <input type="text" id="editInsStatus" placeholder="e.g. Anthem Active" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+        </div>
+
+        <div class="pt-3 flex justify-end space-x-2">
+          <button type="button" onclick="closeModal('editInsuranceModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Save Insurance</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal: Change Passphrase -->
   <div id="changePassphraseModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
@@ -1657,6 +1721,7 @@
       renderLedger();
       renderVehicles();
       renderCareTeam();
+      renderInsuranceCard();
     }
 
     function formatMoney(amount) {
@@ -2818,6 +2883,79 @@
       await persistVault();
       closeModal("editRoleModal");
       renderAllViews();
+    }
+
+    /* ================= MEDICAL & PHARMACY INSURANCE ================= */
+    function renderInsuranceCard() {
+      if (!currentVaultState || !currentVaultState.meta) return;
+      const ins = currentVaultState.meta.insurance || {
+        planName: 'Anthem Prime (HMO-POS)',
+        partnership: 'Anthem Blue Cross Partnership Plan',
+        phone: '833-707-3130',
+        memberId: '489W25457',
+        rxGroup: 'WM2A',
+        rxBin: '020115',
+        rxPcn: 'IS',
+        status: 'Anthem Active'
+      };
+
+      if (document.getElementById("insPlanNameDisplay")) document.getElementById("insPlanNameDisplay").textContent = ins.planName || 'N/A';
+      if (document.getElementById("insPartnershipDisplay")) document.getElementById("insPartnershipDisplay").textContent = ins.partnership || 'N/A';
+      if (document.getElementById("insMemberIdDisplay")) document.getElementById("insMemberIdDisplay").textContent = ins.memberId || 'N/A';
+      if (document.getElementById("insPhoneDisplay")) {
+        const phoneEl = document.getElementById("insPhoneDisplay");
+        phoneEl.textContent = ins.phone || 'N/A';
+        phoneEl.href = ins.phone ? "tel:" + ins.phone.replace(/[^0-9]/g, "") : "#";
+      }
+      if (document.getElementById("insRxGroupDisplay")) document.getElementById("insRxGroupDisplay").textContent = ins.rxGroup || 'N/A';
+      if (document.getElementById("insRxBinDisplay")) document.getElementById("insRxBinDisplay").textContent = ins.rxBin || 'N/A';
+      if (document.getElementById("insRxPcnDisplay")) document.getElementById("insRxPcnDisplay").textContent = ins.rxPcn || 'N/A';
+      if (document.getElementById("insBadgeStatus")) document.getElementById("insBadgeStatus").textContent = ins.status || 'Active Plan';
+    }
+
+    function openEditInsuranceModal() {
+      if (!currentVaultState || !currentVaultState.meta) return;
+      const ins = currentVaultState.meta.insurance || {
+        planName: 'Anthem Prime (HMO-POS)',
+        partnership: 'Anthem Blue Cross Partnership Plan',
+        phone: '833-707-3130',
+        memberId: '489W25457',
+        rxGroup: 'WM2A',
+        rxBin: '020115',
+        rxPcn: 'IS',
+        status: 'Anthem Active'
+      };
+
+      document.getElementById("editInsPlanName").value = ins.planName || '';
+      document.getElementById("editInsPartnership").value = ins.partnership || '';
+      document.getElementById("editInsMemberId").value = ins.memberId || '';
+      document.getElementById("editInsPhone").value = ins.phone || '';
+      document.getElementById("editInsRxGroup").value = ins.rxGroup || '';
+      document.getElementById("editInsRxBin").value = ins.rxBin || '';
+      document.getElementById("editInsRxPcn").value = ins.rxPcn || '';
+      document.getElementById("editInsStatus").value = ins.status || 'Anthem Active';
+
+      document.getElementById("editInsuranceModal").classList.remove("hidden");
+    }
+
+    async function handleSaveInsurance(e) {
+      e.preventDefault();
+      if (!currentVaultState.meta) currentVaultState.meta = {};
+
+      currentVaultState.meta.insurance = {
+        planName: document.getElementById("editInsPlanName").value.trim(),
+        partnership: document.getElementById("editInsPartnership").value.trim(),
+        memberId: document.getElementById("editInsMemberId").value.trim(),
+        phone: document.getElementById("editInsPhone").value.trim(),
+        rxGroup: document.getElementById("editInsRxGroup").value.trim(),
+        rxBin: document.getElementById("editInsRxBin").value.trim(),
+        rxPcn: document.getElementById("editInsRxPcn").value.trim(),
+        status: document.getElementById("editInsStatus").value.trim() || 'Active Plan'
+      };
+
+      await persistVault();
+      closeModal("editInsuranceModal");
+      renderInsuranceCard();
     }
 
     /* ================= EXPORT & BACKUP ================= */
