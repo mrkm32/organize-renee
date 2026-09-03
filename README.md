@@ -34,8 +34,13 @@ This repository contains **NO sensitive financial plaintext, account numbers, ad
 
 ## ⚖️ Reverse Mortgage Reimbursement & Settlement
 
+- **Editable Ledger**: Out-of-pocket reimbursement claims can be edited at any time to adjust amounts, payees, payment methods, reference numbers, or notes.
+- **Receipt Evidence Attachments (Photos & PDFs)**: Attach photos (JPEG, PNG, HEIC) or scanned PDF receipts to any ledger entry. Photos are automatically compressed client-side to preserve razor-sharp legibility while keeping storage minimal.
+- **Interactive Receipt Viewer**: Click any receipt badge to view documents full-screen, rotate camera photos 90° clockwise, preview embedded PDFs, or download files.
+- **Server-Side GitHub Cloud Sync**: End-to-end encrypted synchronization via GitHub API (`vault.json`). Allows seamless multi-device syncing across iPhones, iPads, and PCs while keeping all data client-side encrypted.
+- **IndexedDB High-Capacity Storage**: Browser storage upgraded to IndexedDB, providing gigabytes of capacity for receipts and documents without running into traditional 5MB `localStorage` limits.
 - **Payer Tracking**: Every payment can be attributed to **Mark & Shelly Matthews**, **Laurie Salse**, or **Autumn Aguilar**.
-- **Formal Settlement Statement**: Clicking **"Print Formal Settlement Statement"** generates an audit-ready legal accounting statement for the reverse mortgage escrow officer or attorney.
+- **Formal Settlement Statement**: Clicking **"Print Formal Settlement Statement"** generates an audit-ready legal accounting statement with receipt proof statuses for the reverse mortgage escrow officer or attorney.
 - **Three Signature Blocks**:
   1. **Autumn Aguilar** (Attorney-in-Fact / Power of Attorney for Renee Termine)
   2. **Laurie Salse** (Claimant / On-Site Care Coordinator)

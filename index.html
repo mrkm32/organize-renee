@@ -64,6 +64,12 @@
             Locked
           </span>
 
+          <button id="gitHubSyncBtn" onclick="openGitHubSyncModal()" class="hidden inline-flex items-center px-2.5 py-1.5 border border-slate-300 text-xs font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition" title="GitHub Zero-Knowledge Cloud Sync">
+            <svg class="w-3.5 h-3.5 mr-1.5 text-slate-700" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            <span id="gitHubSyncBtnText">GitHub Sync</span>
+            <span id="gitHubSyncDot" class="w-1.5 h-1.5 ml-1.5 rounded-full bg-slate-400"></span>
+          </button>
+
           <button id="quickSheetsExportBtn" onclick="exportToGoogleSheetsCSV()" class="hidden sm:inline-flex items-center px-3 py-1.5 border border-slate-300 text-xs font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition">
             <svg class="w-4 h-4 mr-1.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -427,6 +433,7 @@
                   <th class="py-3 px-4 text-left">Paid By</th>
                   <th class="py-3 px-4 text-left">Method & Ref #</th>
                   <th class="py-3 px-4 text-left">Amount</th>
+                  <th class="py-3 px-4 text-left">Receipts</th>
                   <th class="py-3 px-4 text-left">POA Status</th>
                   <th class="py-3 px-4 text-right">Actions</th>
                 </tr>
@@ -595,6 +602,33 @@
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <!-- GitHub Zero-Knowledge Cloud Sync Card -->
+            <div class="p-4 bg-slate-900 text-white rounded-xl border border-slate-800 space-y-2 col-span-1 md:col-span-2">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h4 class="font-bold text-white text-sm flex items-center">
+                    <svg class="w-4 h-4 mr-1.5 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                    GitHub Cloud Sync (Server-Side Storage)
+                  </h4>
+                  <p class="text-xs text-slate-300 mt-0.5">
+                    Syncs encrypted vault and receipt documents directly with your GitHub repository (<code class="text-emerald-400 font-mono">mrkm32/organize-renee</code>). Plaintext data is never stored on GitHub.
+                  </p>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <button onclick="openGitHubSyncModal()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold shadow-sm transition whitespace-nowrap">
+                    Configure Sync Settings
+                  </button>
+                  <button onclick="manualSyncPushToGitHub()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold transition whitespace-nowrap">
+                    Push Now
+                  </button>
+                </div>
+              </div>
+              <div class="pt-2 flex flex-wrap items-center justify-between text-[11px] text-slate-400 border-t border-slate-800 gap-1">
+                <span>Status: <strong id="settingsSyncStatusText" class="text-slate-300">Ready</strong></span>
+                <span>Storage Engine: <strong class="text-emerald-400">IndexedDB (Gigabytes Local Capacity)</strong></span>
+              </div>
+            </div>
+
             <!-- Google Sheets Export Card -->
             <div class="p-4 bg-emerald-50/60 rounded-xl border border-emerald-200 space-y-2">
               <h4 class="font-bold text-emerald-950 text-sm flex items-center">
@@ -705,6 +739,7 @@
           <th class="py-2 px-3 text-left border-r border-slate-300">Item / Payee</th>
           <th class="py-2 px-3 text-left border-r border-slate-300">Advanced By</th>
           <th class="py-2 px-3 text-left border-r border-slate-300">Payment Ref #</th>
+          <th class="py-2 px-3 text-center border-r border-slate-300">Receipt Evidence</th>
           <th class="py-2 px-3 text-right">Amount</th>
         </tr>
       </thead>
@@ -890,18 +925,23 @@
     </div>
   </div>
 
-  <!-- Modal: Add Custom Expense -->
-  <div id="addExpenseModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="font-bold text-slate-900 text-base">Log Out-of-Pocket Expense</h3>
-        <button onclick="closeModal('addExpenseModal')" class="text-slate-400 hover:text-slate-600">&times;</button>
+  <!-- Modal: Add / Edit Custom Expense & Receipts -->
+  <div id="addExpenseModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 my-8 max-h-[92vh] flex flex-col">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3 flex-shrink-0">
+        <div>
+          <h3 class="font-bold text-slate-900 text-base" id="expenseModalTitle">Log Out-of-Pocket Expense</h3>
+          <p class="text-[11px] text-slate-500 mt-0.5" id="expenseModalSubtitle">Record an advance to be reimbursed from the reverse mortgage or estate.</p>
+        </div>
+        <button onclick="closeModal('addExpenseModal')" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
       </div>
 
-      <form id="addExpenseForm" onsubmit="handleAddExpenseSubmit(event)" class="space-y-3 text-xs">
+      <form id="addExpenseForm" onsubmit="handleExpenseSubmit(event)" class="space-y-3 text-xs overflow-y-auto pr-1 flex-1">
+        <input type="hidden" id="expenseId" />
+
         <div>
           <label class="block font-semibold text-slate-700 mb-1">Expense Description *</label>
-          <input type="text" id="expenseDescription" required placeholder="e.g. Groceries, Medication, Locks, Attorney" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
+          <input type="text" id="expenseDescription" required placeholder="e.g. SCE Edison Utility Bill, Medication, Storage Locks, Attorney Fee" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -932,7 +972,7 @@
             </select>
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Date *</label>
+            <label class="block font-semibold text-slate-700 mb-1">Date Incurred *</label>
             <input type="date" id="expenseDate" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
           </div>
         </div>
@@ -940,24 +980,220 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Payment Method</label>
-            <input type="text" id="expenseMethod" placeholder="e.g. Visa, Check, Cash" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+            <input type="text" id="expenseMethod" placeholder="e.g. Visa, Debit, Check, Cash, Zelle" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Ref / Receipt #</label>
-            <input type="text" id="expenseRef" placeholder="e.g. Receipt #984" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+            <label class="block font-semibold text-slate-700 mb-1">Ref / Receipt / Check #</label>
+            <input type="text" id="expenseRef" placeholder="e.g. Receipt #984, Check #1042" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Claim Status</label>
+            <select id="expenseStatus" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
+              <option value="Pending Reverse Mortgage">Pending Reverse Mortgage</option>
+              <option value="Under Review">Under Review</option>
+              <option value="Reimbursed">Reimbursed</option>
+              <option value="Settled">Settled</option>
+            </select>
+          </div>
+          <div class="flex items-center pt-5">
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="expensePoaApproved" class="rounded border-slate-300 text-purple-600 focus:ring-purple-500 w-4 h-4" checked />
+              <span class="ml-2 font-medium text-slate-700">POA Acknowledged</span>
+            </label>
           </div>
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Notes</label>
-          <textarea id="expenseNotes" rows="2" placeholder="Item details, purpose..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+          <label class="block font-semibold text-slate-700 mb-1">Notes / Purpose</label>
+          <textarea id="expenseNotes" rows="2" placeholder="Item details, purpose for estate care, invoice notes..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
         </div>
 
-        <div class="pt-3 flex justify-end space-x-2">
-          <button type="button" onclick="closeModal('addExpenseModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Add Expense</button>
+        <!-- Receipt Attachments Section -->
+        <div class="border-t border-slate-200 pt-3 space-y-2">
+          <div class="flex justify-between items-center">
+            <label class="block font-bold text-slate-800 text-xs flex items-center">
+              <svg class="w-3.5 h-3.5 mr-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+              Receipt Evidence (Photos & PDFs)
+            </label>
+            <span id="stagedAttachmentCount" class="text-[11px] text-slate-400 font-mono">0 files attached</span>
+          </div>
+
+          <div id="receiptDropzone" onclick="triggerReceiptFileInput()" class="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl p-3.5 text-center cursor-pointer bg-slate-50/70 hover:bg-emerald-50/40 transition group">
+            <input type="file" id="receiptFileInput" accept="image/*,application/pdf" multiple class="hidden" onchange="handleReceiptFilesSelected(event)" />
+            <div class="flex flex-col items-center justify-center space-y-1">
+              <div class="w-7 h-7 rounded-full bg-slate-100 group-hover:bg-emerald-100 flex items-center justify-center text-slate-500 group-hover:text-emerald-600 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+              <p class="text-xs font-semibold text-slate-700">Click or drag & drop to attach receipts</p>
+              <p class="text-[11px] text-slate-400">Camera photos (auto-optimized) or PDF receipts (Max 2.5MB per PDF)</p>
+            </div>
+          </div>
+
+          <!-- Staged Attachments List -->
+          <div id="stagedAttachmentsList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <div class="pt-3 flex justify-between items-center border-t border-slate-100 flex-shrink-0">
+          <button type="button" id="deleteExpenseBtn" onclick="deleteCurrentEditExpense()" class="hidden px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-semibold transition">
+            Delete Claim
+          </button>
+          <div class="flex items-center space-x-2 ml-auto">
+            <button type="button" onclick="closeModal('addExpenseModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+            <button type="submit" id="saveExpenseBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-md shadow-emerald-600/20">Save Expense</button>
+          </div>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal: Receipt Document / Photo Viewer -->
+  <div id="receiptViewerModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-700 overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 flex-shrink-0">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Receipt Evidence</span>
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base" id="receiptViewerTitle">Receipt Proof</h3>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5" id="receiptViewerMeta">Loading...</p>
+        </div>
+        <div class="flex items-center space-x-1.5">
+          <button id="receiptViewerRotateBtn" onclick="rotateReceiptViewerImage()" title="Rotate 90° Clockwise" class="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 transition hidden">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+          <button onclick="downloadActiveReceipt()" title="Download Receipt" class="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          </button>
+          <button onclick="openActiveReceiptInNewTab()" title="Open in New Tab" class="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          </button>
+          <button onclick="closeModal('receiptViewerModal')" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 text-xl font-bold ml-1">&times;</button>
+        </div>
+      </div>
+
+      <!-- Multi-attachment Tabs (shown if > 1 attachment) -->
+      <div id="receiptViewerTabsContainer" class="hidden px-4 py-2 bg-slate-100 border-b border-slate-200 flex items-center space-x-2 overflow-x-auto text-xs flex-shrink-0">
+        <!-- Injected via JS -->
+      </div>
+
+      <!-- Preview Body -->
+      <div class="flex-1 overflow-auto p-4 bg-slate-900/5 flex items-center justify-center min-h-[320px]">
+        <div id="receiptViewerContent" class="w-full flex items-center justify-center">
+          <!-- Injected via JS: <img> or <iframe> -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-xs flex-shrink-0">
+        <div id="receiptViewerFileInfo" class="text-slate-500 font-mono text-[11px]">
+          <!-- File info -->
+        </div>
+        <div class="flex space-x-2">
+          <button id="receiptViewerEditBtn" onclick="editClaimFromViewer()" class="px-3 py-1.5 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-100 font-semibold transition">
+            Edit Claim & Files
+          </button>
+          <button onclick="closeModal('receiptViewerModal')" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-semibold transition">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: GitHub Zero-Knowledge Cloud Sync Settings -->
+  <div id="gitHubSyncModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 my-8">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">GitHub Cloud Sync</h3>
+            <p class="text-[11px] text-slate-500">Zero-Knowledge Encrypted Multi-Device Sync</p>
+          </div>
+        </div>
+        <button onclick="closeModal('gitHubSyncModal')" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+      </div>
+
+      <!-- Informational banner -->
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900 space-y-1">
+        <p class="font-semibold flex items-center text-emerald-800">
+          <svg class="w-4 h-4 mr-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          Zero-Knowledge Server Storage
+        </p>
+        <p class="text-emerald-800/90 leading-relaxed text-[11px]">
+          Only AES-256 GCM encrypted ciphertext (<code class="font-mono bg-white/70 px-1 py-0.5 rounded">vault.json</code>) is pushed to GitHub. Plaintext debts, amounts, and receipt photos are never transmitted unencrypted.
+        </p>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">GitHub Personal Access Token (PAT) *</label>
+          <div class="relative">
+            <input type="password" id="ghSyncToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx or github_pat_..." class="w-full pl-3 pr-10 py-2 border border-slate-300 rounded-lg text-slate-800 font-mono text-xs" />
+            <button type="button" onclick="togglePasswordVisibility('ghSyncToken')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-1">
+            Fine-grained token with <code class="font-mono bg-slate-100 px-1 py-0.5 rounded">Contents: Read & Write</code> on <code class="font-mono bg-slate-100 px-1 py-0.5 rounded">mrkm32/organize-renee</code>. Saved strictly in this browser.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Repository</label>
+            <input type="text" id="ghSyncRepo" value="mrkm32/organize-renee" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-mono text-xs" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Branch</label>
+            <input type="text" id="ghSyncBranch" value="main" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-mono text-xs" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Vault File Path in Repo</label>
+          <input type="text" id="ghSyncPath" value="vault.json" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-mono text-xs" />
+        </div>
+
+        <div class="flex items-center space-x-2 pt-1">
+          <input type="checkbox" id="ghSyncAuto" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" checked />
+          <label for="ghSyncAuto" class="font-medium text-slate-700 cursor-pointer">
+            Automatically push encrypted updates to GitHub after saving changes
+          </label>
+        </div>
+
+        <!-- Sync Status & Messages -->
+        <div id="ghSyncStatusBox" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-600 space-y-1">
+          <div class="flex justify-between">
+            <span class="font-semibold text-slate-700">Last Synced:</span>
+            <span id="ghSyncLastTime" class="font-mono">Never</span>
+          </div>
+          <div id="ghSyncDetailMsg" class="text-slate-500">Configure your token above to enable automatic cloud sync.</div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="pt-2 flex flex-wrap gap-2 justify-between items-center border-t border-slate-100">
+          <button type="button" onclick="testGitHubConnection()" class="px-3 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">
+            Test Connection
+          </button>
+          <div class="flex space-x-2">
+            <button type="button" onclick="manualSyncPullFromGitHub()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-semibold transition">
+              Pull from GitHub
+            </button>
+            <button type="button" onclick="saveGitHubSyncSettingsAndPush()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold transition shadow-sm">
+              Save & Push Now
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1417,12 +1653,362 @@
       return JSON.parse(dec.decode(decrypted));
     }
 
-    // Save current decrypted state to localStorage (encrypted)
-    async function persistVault() {
+    /* ================= INDEXEDDB STORAGE ENGINE (GIGABYTES CAPACITY) ================= */
+    const IDB_NAME = "ReneeFamilyVaultDB";
+    const IDB_STORE = "vaultStore";
+    const IDB_KEY = "encrypted_vault";
+
+    function openVaultDB() {
+      return new Promise((resolve) => {
+        if (!window.indexedDB) {
+          resolve(null);
+          return;
+        }
+        const request = indexedDB.open(IDB_NAME, 1);
+        request.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(IDB_STORE)) {
+            db.createObjectStore(IDB_STORE);
+          }
+        };
+        request.onsuccess = (e) => resolve(e.target.result);
+        request.onerror = (e) => {
+          console.warn("IndexedDB open error:", e);
+          resolve(null);
+        };
+      });
+    }
+
+    async function idbGetVault() {
+      try {
+        const db = await openVaultDB();
+        if (!db) return null;
+        return new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, "readonly");
+          const store = tx.objectStore(IDB_STORE);
+          const req = store.get(IDB_KEY);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (err) {
+        return null;
+      }
+    }
+
+    async function idbSetVault(data) {
+      try {
+        const db = await openVaultDB();
+        if (!db) return false;
+        return new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, "readwrite");
+          const store = tx.objectStore(IDB_STORE);
+          store.put(data, IDB_KEY);
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => resolve(false);
+        });
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function idbClearVault() {
+      try {
+        const db = await openVaultDB();
+        if (!db) return;
+        const tx = db.transaction(IDB_STORE, "readwrite");
+        tx.objectStore(IDB_STORE).clear();
+      } catch (err) {}
+    }
+
+    /* ================= GITHUB ZERO-KNOWLEDGE CLOUD SYNC ================= */
+    const GITHUB_SYNC_KEY = "renee_github_sync_config";
+
+    function getGitHubSyncConfig() {
+      try {
+        const raw = localStorage.getItem(GITHUB_SYNC_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return {
+        token: "",
+        repo: "mrkm32/organize-renee",
+        branch: "main",
+        path: "vault.json",
+        autoSync: true,
+        lastSynced: null
+      };
+    }
+
+    function saveGitHubSyncConfig(cfg) {
+      localStorage.setItem(GITHUB_SYNC_KEY, JSON.stringify(cfg));
+      updateGitHubSyncUI();
+    }
+
+    function updateGitHubSyncUI() {
+      const cfg = getGitHubSyncConfig();
+      const dot = document.getElementById("gitHubSyncDot");
+      const btnText = document.getElementById("gitHubSyncBtnText");
+      const statusText = document.getElementById("settingsSyncStatusText");
+
+      if (!cfg.token) {
+        if (dot) dot.className = "w-1.5 h-1.5 ml-1.5 rounded-full bg-slate-400";
+        if (btnText) btnText.textContent = "GitHub Sync";
+        if (statusText) statusText.textContent = "Local Only (Configure Token to Sync)";
+      } else {
+        if (dot) dot.className = "w-1.5 h-1.5 ml-1.5 rounded-full bg-emerald-500 animate-pulse";
+        if (btnText) btnText.textContent = "GitHub Synced";
+        if (statusText) statusText.textContent = cfg.lastSynced ? `Synced (${new Date(cfg.lastSynced).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})` : "Connected";
+      }
+
+      if (document.getElementById("ghSyncLastTime")) {
+        document.getElementById("ghSyncLastTime").textContent = cfg.lastSynced ? new Date(cfg.lastSynced).toLocaleString() : "Never";
+      }
+    }
+
+    function openGitHubSyncModal() {
+      const cfg = getGitHubSyncConfig();
+      document.getElementById("ghSyncToken").value = cfg.token || "";
+      document.getElementById("ghSyncRepo").value = cfg.repo || "mrkm32/organize-renee";
+      document.getElementById("ghSyncBranch").value = cfg.branch || "main";
+      document.getElementById("ghSyncPath").value = cfg.path || "vault.json";
+      document.getElementById("ghSyncAuto").checked = cfg.autoSync !== false;
+      document.getElementById("ghSyncDetailMsg").textContent = cfg.token ? "Token configured. Ready to sync." : "Configure your token above to enable automatic cloud sync.";
+      document.getElementById("gitHubSyncModal").classList.remove("hidden");
+    }
+
+    async function testGitHubConnection() {
+      const token = document.getElementById("ghSyncToken").value.trim();
+      const repo = document.getElementById("ghSyncRepo").value.trim();
+      const msg = document.getElementById("ghSyncDetailMsg");
+
+      if (!token) {
+        msg.innerHTML = '<span class="text-rose-600 font-semibold">Please enter a Personal Access Token first.</span>';
+        return;
+      }
+
+      msg.innerHTML = '<span class="text-amber-600">Testing connection to GitHub API...</span>';
+
+      try {
+        const res = await fetch(`https://api.github.com/repos/${repo}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": "application/vnd.github.v3+json"
+          }
+        });
+
+        if (res.status === 200) {
+          const data = await res.json();
+          msg.innerHTML = `<span class="text-emerald-700 font-semibold">✓ Connected successfully to <strong>${data.full_name}</strong> (${data.private ? 'Private' : 'Public'} repo)!</span>`;
+        } else if (res.status === 401) {
+          msg.innerHTML = '<span class="text-rose-600 font-semibold">✗ 401 Unauthorized: Invalid or expired GitHub token.</span>';
+        } else if (res.status === 404) {
+          msg.innerHTML = '<span class="text-rose-600 font-semibold">✗ 404 Not Found: Repository not found or token lacks access.</span>';
+        } else {
+          msg.innerHTML = `<span class="text-rose-600">✗ GitHub API returned HTTP ${res.status}.</span>`;
+        }
+      } catch (err) {
+        msg.innerHTML = `<span class="text-rose-600">✗ Connection error: ${err.message}</span>`;
+      }
+    }
+
+    async function saveGitHubSyncSettingsAndPush() {
+      const token = document.getElementById("ghSyncToken").value.trim();
+      const repo = document.getElementById("ghSyncRepo").value.trim();
+      const branch = document.getElementById("ghSyncBranch").value.trim() || "main";
+      const path = document.getElementById("ghSyncPath").value.trim() || "vault.json";
+      const autoSync = document.getElementById("ghSyncAuto").checked;
+
+      const cfg = {
+        token: token,
+        repo: repo,
+        branch: branch,
+        path: path,
+        autoSync: autoSync,
+        lastSynced: getGitHubSyncConfig().lastSynced
+      };
+
+      saveGitHubSyncConfig(cfg);
+
+      if (token && currentVaultState) {
+        await pushVaultToGitHub(false);
+      } else {
+        closeModal("gitHubSyncModal");
+        alert("GitHub Sync settings saved!");
+      }
+    }
+
+    async function pushVaultToGitHub(silent = false) {
+      const cfg = getGitHubSyncConfig();
+      if (!cfg.token || !currentVaultState || !window.masterPassphraseCache) {
+        if (!silent) alert("Please configure your GitHub token and unlock the vault before syncing.");
+        return false;
+      }
+
+      const msg = document.getElementById("ghSyncDetailMsg");
+      if (msg) msg.innerHTML = '<span class="text-amber-600">Encrypting and pushing to GitHub...</span>';
+
+      try {
+        const encrypted = await encryptState(currentVaultState, window.masterPassphraseCache);
+        const jsonStr = JSON.stringify(encrypted, null, 2);
+        // Base64 encode UTF-8 string safely for GitHub Contents API
+        const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
+
+        // 1. Get current file sha if it exists
+        let sha = null;
+        try {
+          const checkRes = await fetch(`https://api.github.com/repos/${cfg.repo}/contents/${cfg.path}?ref=${cfg.branch}&t=${Date.now()}`, {
+            headers: {
+              "Authorization": `Bearer ${cfg.token}`,
+              "Accept": "application/vnd.github.v3+json"
+            }
+          });
+          if (checkRes.status === 200) {
+            const checkData = await checkRes.json();
+            sha = checkData.sha;
+          }
+        } catch (checkErr) {
+          console.warn("Could not check existing sha:", checkErr);
+        }
+
+        // 2. Put file
+        const body = {
+          message: `Update encrypted family vault & receipts [${new Date().toISOString().split("T")[0]}] [skip ci]`,
+          content: base64Content,
+          branch: cfg.branch
+        };
+        if (sha) body.sha = sha;
+
+        const putRes = await fetch(`https://api.github.com/repos/${cfg.repo}/contents/${cfg.path}`, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${cfg.token}`,
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.github.v3+json"
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (putRes.ok) {
+          cfg.lastSynced = new Date().toISOString();
+          saveGitHubSyncConfig(cfg);
+          if (msg) msg.innerHTML = '<span class="text-emerald-700 font-semibold">✓ Successfully pushed encrypted vault to GitHub!</span>';
+          if (!silent) {
+            alert("✓ Successfully pushed encrypted vault & receipts to GitHub!");
+            closeModal("gitHubSyncModal");
+          }
+          return true;
+        } else {
+          const errData = await putRes.json();
+          if (msg) msg.innerHTML = `<span class="text-rose-600 font-semibold">✗ Push failed: ${errData.message || putRes.statusText}</span>`;
+          if (!silent) alert(`GitHub push failed: ${errData.message || putRes.statusText}`);
+          return false;
+        }
+      } catch (err) {
+        console.error("GitHub push error:", err);
+        if (msg) msg.innerHTML = `<span class="text-rose-600 font-semibold">✗ Error: ${err.message}</span>`;
+        if (!silent) alert(`GitHub push error: ${err.message}`);
+        return false;
+      }
+    }
+
+    async function manualSyncPushToGitHub() {
+      const cfg = getGitHubSyncConfig();
+      if (!cfg.token) {
+        openGitHubSyncModal();
+        return;
+      }
+      await pushVaultToGitHub(false);
+    }
+
+    async function manualSyncPullFromGitHub() {
+      const cfg = getGitHubSyncConfig();
+      const msg = document.getElementById("ghSyncDetailMsg");
+      if (msg) msg.innerHTML = '<span class="text-amber-600">Fetching latest vault from GitHub...</span>';
+
+      try {
+        let fileContent = null;
+        if (cfg.token) {
+          const res = await fetch(`https://api.github.com/repos/${cfg.repo}/contents/${cfg.path}?ref=${cfg.branch}&t=${Date.now()}`, {
+            headers: {
+              "Authorization": `Bearer ${cfg.token}`,
+              "Accept": "application/vnd.github.v3+json"
+            }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            fileContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ""))));
+          }
+        }
+        if (!fileContent) {
+          const rawUrl = `https://raw.githubusercontent.com/${cfg.repo}/${cfg.branch}/${cfg.path}?t=${Date.now()}`;
+          const res = await fetch(rawUrl);
+          if (res.ok) {
+            fileContent = await res.text();
+          } else {
+            const localRes = await fetch(`./${cfg.path}?t=${Date.now()}`);
+            if (localRes.ok) fileContent = await localRes.text();
+          }
+        }
+
+        if (!fileContent) {
+          if (msg) msg.innerHTML = '<span class="text-rose-600">Could not retrieve remote vault file from GitHub.</span>';
+          alert("Could not find remote vault.json on GitHub.");
+          return;
+        }
+
+        const payload = JSON.parse(fileContent);
+        if (!window.masterPassphraseCache) {
+          await idbSetVault(payload);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+          cfg.lastSynced = new Date().toISOString();
+          saveGitHubSyncConfig(cfg);
+          alert("Remote vault downloaded! Please unlock to view updated entries.");
+          closeModal("gitHubSyncModal");
+          return;
+        }
+
+        const remoteDecrypted = await decryptPayload(payload, window.masterPassphraseCache);
+        if (confirm(`Remote vault retrieved (Last updated: ${remoteDecrypted.meta ? remoteDecrypted.meta.lastUpdated : 'Unknown'}). Load this version now?`)) {
+          currentVaultState = remoteDecrypted;
+          await persistVault(true);
+          cfg.lastSynced = new Date().toISOString();
+          saveGitHubSyncConfig(cfg);
+          renderAllViews();
+          alert("Vault updated from GitHub!");
+          closeModal("gitHubSyncModal");
+        }
+      } catch (err) {
+        console.error(err);
+        if (msg) msg.innerHTML = `<span class="text-rose-600">Pull failed: ${err.message}</span>`;
+        alert("Failed to pull from GitHub: " + err.message);
+      }
+    }
+
+    // Save current decrypted state to IndexedDB (and localStorage fallback), plus auto-sync to GitHub if enabled
+    async function persistVault(skipGitHubSync = false) {
       if (!currentVaultState || !window.masterPassphraseCache) return;
       currentVaultState.meta.lastUpdated = new Date().toISOString();
       const encrypted = await encryptState(currentVaultState, window.masterPassphraseCache);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
+      const jsonStr = JSON.stringify(encrypted);
+
+      // 1. Save to IndexedDB (Capacity in Gigabytes)
+      await idbSetVault(encrypted);
+
+      // 2. Mirror to localStorage if size permits (< 4.5MB)
+      try {
+        if (jsonStr.length < 4.5 * 1024 * 1024) {
+          localStorage.setItem(STORAGE_KEY, jsonStr);
+        }
+      } catch (lsErr) {
+        console.warn("localStorage quota exceeded, safely stored in IndexedDB:", lsErr);
+      }
+
+      // 3. Auto-sync to GitHub in background if configured
+      if (!skipGitHubSync) {
+        const cfg = getGitHubSyncConfig();
+        if (cfg.token && cfg.autoSync) {
+          pushVaultToGitHub(true).catch(e => console.warn("GitHub background push failed:", e));
+        }
+      }
     }
 
     /* ================= INITIALIZATION & AUTH ================= */
@@ -1441,6 +2027,8 @@
       const todayStr = new Date().toISOString().split("T")[0];
       if (document.getElementById("payBillDate")) document.getElementById("payBillDate").value = todayStr;
       if (document.getElementById("expenseDate")) document.getElementById("expenseDate").value = todayStr;
+
+      updateGitHubSyncUI();
     });
 
     async function handleAuthSubmit(e) {
@@ -1451,42 +2039,98 @@
 
       if (!pass) return;
 
-      const existingVaultStr = localStorage.getItem(STORAGE_KEY);
+      // 1. Check local IndexedDB and localStorage
+      let localPayload = await idbGetVault();
+      if (!localPayload) {
+        const existingVaultStr = localStorage.getItem(STORAGE_KEY);
+        if (existingVaultStr) {
+          try { localPayload = JSON.parse(existingVaultStr); } catch (e) {}
+        }
+      }
+
+      // 2. Try to fetch remote vault from GitHub or local file if available
+      let remotePayload = null;
+      try {
+        const ghCfg = getGitHubSyncConfig();
+        let fileText = null;
+        if (ghCfg.token) {
+          const ghRes = await fetch(`https://api.github.com/repos/${ghCfg.repo}/contents/${ghCfg.path}?ref=${ghCfg.branch}&t=${Date.now()}`, {
+            headers: {
+              "Authorization": `Bearer ${ghCfg.token}`,
+              "Accept": "application/vnd.github.v3+json"
+            }
+          });
+          if (ghRes.ok) {
+            const ghData = await ghRes.json();
+            fileText = decodeURIComponent(escape(atob(ghData.content.replace(/\s/g, ""))));
+          }
+        }
+        if (!fileText) {
+          const fetchRes = await fetch(`./vault.json?t=${Date.now()}`);
+          if (fetchRes.ok) fileText = await fetchRes.text();
+        }
+        if (fileText) {
+          remotePayload = JSON.parse(fileText);
+        }
+      } catch (remoteErr) {
+        console.log("Remote vault fetch skipped or offline:", remoteErr);
+      }
 
       try {
         let restoredState = null;
-        if (existingVaultStr) {
-          const payload = JSON.parse(existingVaultStr);
-          restoredState = await decryptPayload(payload, pass);
+        let localState = null;
+        let remoteState = null;
 
-          // Auto-merge newly added default bills, action items, and team roles from master vault
-          try {
-            const masterState = await decryptPayload(ENCRYPTED_INITIAL_VAULT, pass);
-            if (masterState && masterState.bills) {
-              masterState.bills.forEach(mb => {
-                if (!restoredState.bills.some(b => b.id === mb.id)) {
-                  restoredState.bills.push(mb);
-                }
-              });
-            }
-            if (masterState && masterState.actionItems && (!restoredState.actionItems || restoredState.actionItems.length === 0)) {
-              restoredState.actionItems = JSON.parse(JSON.stringify(masterState.actionItems));
-            }
-            if (masterState && masterState.teamRoles && (!restoredState.teamRoles || restoredState.teamRoles.length === 0)) {
-              restoredState.teamRoles = JSON.parse(JSON.stringify(masterState.teamRoles));
-            }
-          } catch (mErr) {
-            console.warn("Could not merge master vault data:", mErr);
+        if (localPayload) {
+          try { localState = await decryptPayload(localPayload, pass); } catch (e) {}
+        }
+        if (remotePayload) {
+          try { remoteState = await decryptPayload(remotePayload, pass); } catch (e) {}
+        }
+
+        if (localState && remoteState) {
+          const localTime = new Date(localState.meta?.lastUpdated || 0).getTime();
+          const remoteTime = new Date(remoteState.meta?.lastUpdated || 0).getTime();
+          if (remoteTime > localTime) {
+            restoredState = remoteState;
+            console.log("Loaded newer vault from GitHub sync");
+          } else {
+            restoredState = localState;
           }
+        } else if (remoteState) {
+          restoredState = remoteState;
+        } else if (localState) {
+          restoredState = localState;
         } else {
           // Decrypt the pre-encrypted initial family vault
           restoredState = await decryptPayload(ENCRYPTED_INITIAL_VAULT, pass);
         }
 
+        // Auto-merge newly added default bills, action items, and team roles from master vault if missing
+        try {
+          const masterState = await decryptPayload(ENCRYPTED_INITIAL_VAULT, pass);
+          if (masterState && masterState.bills) {
+            masterState.bills.forEach(mb => {
+              if (!restoredState.bills.some(b => b.id === mb.id)) {
+                restoredState.bills.push(mb);
+              }
+            });
+          }
+          if (masterState && masterState.actionItems && (!restoredState.actionItems || restoredState.actionItems.length === 0)) {
+            restoredState.actionItems = JSON.parse(JSON.stringify(masterState.actionItems));
+          }
+          if (masterState && masterState.teamRoles && (!restoredState.teamRoles || restoredState.teamRoles.length === 0)) {
+            restoredState.teamRoles = JSON.parse(JSON.stringify(masterState.teamRoles));
+          }
+        } catch (mErr) {
+          console.warn("Could not merge master vault data:", mErr);
+        }
+
         currentVaultState = restoredState;
         window.masterPassphraseCache = pass;
-        // Ensure saved to localStorage
-        await persistVault();
+
+        // Ensure saved to IndexedDB and mirror to localStorage
+        await persistVault(true);
         unlockAppUI();
       } catch (err) {
         console.error(err);
@@ -1500,11 +2144,13 @@
       document.getElementById("appContainer").classList.remove("hidden");
       document.getElementById("mainNav").classList.remove("hidden");
       document.getElementById("lockVaultBtn").classList.remove("hidden");
+      if (document.getElementById("gitHubSyncBtn")) document.getElementById("gitHubSyncBtn").classList.remove("hidden");
 
       const badge = document.getElementById("vaultStatusBadge");
       badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800";
       badge.innerHTML = '<span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full"></span> Unlocked';
 
+      updateGitHubSyncUI();
       renderAllViews();
     }
 
@@ -1516,15 +2162,17 @@
       document.getElementById("appContainer").classList.add("hidden");
       document.getElementById("mainNav").classList.add("hidden");
       document.getElementById("lockVaultBtn").classList.add("hidden");
+      if (document.getElementById("gitHubSyncBtn")) document.getElementById("gitHubSyncBtn").classList.add("hidden");
 
       const badge = document.getElementById("vaultStatusBadge");
       badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800";
       badge.innerHTML = '<span class="w-1.5 h-1.5 mr-1.5 bg-amber-500 rounded-full animate-pulse"></span> Locked';
     }
 
-    function showResetVaultConfirmation() {
+    async function showResetVaultConfirmation() {
       if (confirm("Are you sure you want to reset the vault? This will erase local storage and re-initialize with the default ledger. Make sure you have an exported backup if you have saved changes!")) {
         localStorage.removeItem(STORAGE_KEY);
+        await idbClearVault();
         window.location.reload();
       }
     }
@@ -2525,7 +3173,174 @@
       }
     }
 
-    /* ================= REIMBURSEMENT LEDGER ================= */
+    /* ================= REIMBURSEMENT LEDGER & RECEIPT ATTACHMENTS ================= */
+    function formatFileSize(bytes) {
+      if (!bytes || isNaN(bytes)) return "0 B";
+      if (bytes < 1024) return bytes + " B";
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    }
+
+    let stagedExpenseAttachments = [];
+
+    function triggerReceiptFileInput() {
+      const input = document.getElementById("receiptFileInput");
+      if (input) input.click();
+    }
+
+    async function handleReceiptFilesSelected(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      for (const file of Array.from(files)) {
+        try {
+          if (file.type.startsWith("image/")) {
+            const item = await processImageFile(file);
+            stagedExpenseAttachments.push(item);
+          } else if (file.type === "application/pdf") {
+            const item = await processPdfFile(file);
+            stagedExpenseAttachments.push(item);
+          } else {
+            alert(`Unsupported file format: ${file.name}. Please upload photos (JPG, PNG) or PDF documents.`);
+          }
+        } catch (err) {
+          console.error("Error reading file:", err);
+          alert(`Failed to load ${file.name}: ${err.message}`);
+        }
+      }
+
+      event.target.value = "";
+      renderStagedAttachments();
+    }
+
+    function processImageFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            let width = img.width;
+            let height = img.height;
+            const MAX_DIM = 1600;
+            if (width > MAX_DIM || height > MAX_DIM) {
+              if (width > height) {
+                height = Math.round((height * MAX_DIM) / width);
+                width = MAX_DIM;
+              } else {
+                width = Math.round((width * MAX_DIM) / height);
+                height = MAX_DIM;
+              }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.78);
+            resolve({
+              id: "att-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+              name: file.name.replace(/\.[^/.]+$/, "") + ".jpg",
+              type: "image",
+              mimeType: "image/jpeg",
+              dataUrl: compressedDataUrl,
+              size: Math.round((compressedDataUrl.length * 3) / 4),
+              dateAdded: new Date().toISOString()
+            });
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function processPdfFile(file) {
+      return new Promise((resolve, reject) => {
+        if (file.size > 2.8 * 1024 * 1024) {
+          alert(`Note: "${file.name}" is ${(file.size / 1024 / 1024).toFixed(1)}MB. Storing large PDFs will take more storage space.`);
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          resolve({
+            id: "att-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+            name: file.name,
+            type: "pdf",
+            mimeType: "application/pdf",
+            dataUrl: e.target.result,
+            size: file.size,
+            dateAdded: new Date().toISOString()
+          });
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function removeStagedAttachment(attId) {
+      stagedExpenseAttachments = stagedExpenseAttachments.filter(a => a.id !== attId);
+      renderStagedAttachments();
+    }
+
+    function renderStagedAttachments() {
+      const list = document.getElementById("stagedAttachmentsList");
+      const countSpan = document.getElementById("stagedAttachmentCount");
+      if (!list) return;
+
+      if (countSpan) {
+        countSpan.textContent = `${stagedExpenseAttachments.length} file${stagedExpenseAttachments.length === 1 ? '' : 's'} attached`;
+      }
+
+      if (stagedExpenseAttachments.length === 0) {
+        list.innerHTML = `<p class="text-slate-400 italic text-[11px] text-center py-1">No receipts attached yet.</p>`;
+        return;
+      }
+
+      list.innerHTML = "";
+      stagedExpenseAttachments.forEach((att, idx) => {
+        const row = document.createElement("div");
+        row.className = "flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs";
+        
+        const isImg = att.type === "image";
+        const iconOrThumb = isImg 
+          ? `<img src="${att.dataUrl}" class="w-8 h-8 rounded object-cover border border-slate-200" alt="Receipt preview" />`
+          : `<div class="w-8 h-8 rounded bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-[10px]">PDF</div>`;
+
+        row.innerHTML = `
+          <div class="flex items-center space-x-2.5 overflow-hidden">
+            ${iconOrThumb}
+            <div class="truncate max-w-[240px]">
+              <p class="font-medium text-slate-800 truncate">${att.name}</p>
+              <p class="text-[10px] text-slate-400 font-mono">${formatFileSize(att.size)}</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-1">
+            <button type="button" onclick="previewStagedReceipt(${idx})" class="px-2 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded border border-slate-200 text-[11px] font-semibold transition">
+              View
+            </button>
+            <button type="button" onclick="removeStagedAttachment('${att.id}')" class="p-1 text-slate-400 hover:text-rose-600 rounded transition" title="Remove attachment">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function previewStagedReceipt(index) {
+      const att = stagedExpenseAttachments[index];
+      if (!att) return;
+      activeViewerClaim = {
+        id: "preview",
+        description: "Preview Receipt",
+        paidBy: "Staged Attachment",
+        amount: 0,
+        attachments: stagedExpenseAttachments
+      };
+      renderReceiptViewerContent(index);
+      document.getElementById("receiptViewerModal").classList.remove("hidden");
+    }
+
     function renderLedger() {
       if (!currentVaultState) return;
 
@@ -2570,14 +3385,35 @@
       }
 
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">No out-of-pocket expenses logged yet. Click "+ Log Out-of-Pocket Expense" or pay a bill above to record an advance.</td></tr>`;
-        printTbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500 italic">No advances logged at this time.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400">No out-of-pocket expenses logged yet. Click "+ Log Out-of-Pocket Expense" or pay a bill above to record an advance.</td></tr>`;
+        printTbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-500 italic">No advances logged at this time.</td></tr>`;
         return;
       }
 
       list.forEach(r => {
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50";
+
+        const attCount = (r.attachments && r.attachments.length > 0) ? r.attachments.length : 0;
+        let receiptHtml = "";
+        if (attCount > 0) {
+          const firstType = r.attachments[0].type === "pdf" ? "PDF" : "Photo";
+          const label = attCount === 1 ? firstType : `${attCount} Files`;
+          receiptHtml = `
+            <button onclick="openReceiptViewer('${r.id}')" class="inline-flex items-center px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 font-semibold transition text-[11px]" title="View ${attCount} receipt attachment(s)">
+              <svg class="w-3.5 h-3.5 mr-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+              <span>${label}</span>
+            </button>
+          `;
+        } else {
+          receiptHtml = `
+            <button onclick="openExpenseModal('${r.id}', true)" class="inline-flex items-center px-2 py-1 rounded text-[11px] text-slate-400 hover:text-emerald-700 hover:bg-slate-100 transition" title="Attach picture or PDF receipt">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              + Attach
+            </button>
+          `;
+        }
+
         tr.innerHTML = `
           <td class="py-3 px-4 font-mono text-slate-600">${r.date}</td>
           <td class="py-3 px-4">
@@ -2594,43 +3430,112 @@
             <div class="text-[10px] text-slate-400 font-mono">${r.refNum || ''}</div>
           </td>
           <td class="py-3 px-4 font-black text-slate-900">${formatMoney(r.amount)}</td>
+          <td class="py-3 px-4">${receiptHtml}</td>
           <td class="py-3 px-4">
             <span class="px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-200 rounded text-[10px] font-bold">
-              POA Acknowledged
+              ${r.poaApproved ? 'POA Acknowledged' : 'Pending POA'}
             </span>
           </td>
-          <td class="py-3 px-4 text-right">
-            <button onclick="deleteReimbursement('${r.id}')" class="text-slate-400 hover:text-rose-600">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </button>
+          <td class="py-3 px-4 text-right whitespace-nowrap">
+            <div class="flex items-center justify-end space-x-1">
+              <button onclick="openExpenseModal('${r.id}')" title="Edit Claim & Receipts" class="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </button>
+              <button onclick="deleteReimbursement('${r.id}')" title="Delete Claim" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
 
         // Printable statement row
         const ptr = document.createElement("tr");
+        const printReceiptStr = (r.attachments && r.attachments.length > 0)
+          ? `✓ On File (${r.attachments.length} ${r.attachments[0].type === 'pdf' ? 'PDF' : 'Photo'})`
+          : `<span class="text-slate-400 italic">Pending</span>`;
+
         ptr.innerHTML = `
           <td class="py-2 px-3 border-r border-slate-300 font-mono">${r.date}</td>
           <td class="py-2 px-3 border-r border-slate-300"><strong>${r.description}</strong> (${r.category})</td>
           <td class="py-2 px-3 border-r border-slate-300">${r.paidBy}</td>
           <td class="py-2 px-3 border-r border-slate-300">${r.method || ''} ${r.refNum ? '(' + r.refNum + ')' : ''}</td>
+          <td class="py-2 px-3 border-r border-slate-300 text-center font-mono text-[11px]">${printReceiptStr}</td>
           <td class="py-2 px-3 text-right font-bold">${formatMoney(r.amount)}</td>
         `;
         printTbody.appendChild(ptr);
       });
     }
 
-    function openAddExpenseModal() {
-      document.getElementById("addExpenseForm").reset();
-      document.getElementById("expenseDate").value = new Date().toISOString().split("T")[0];
+    function openExpenseModal(claimId = null, focusReceipts = false) {
+      const form = document.getElementById("addExpenseForm");
+      form.reset();
+      const delBtn = document.getElementById("deleteExpenseBtn");
+      const saveBtn = document.getElementById("saveExpenseBtn");
+      const titleEl = document.getElementById("expenseModalTitle");
+      const subTitleEl = document.getElementById("expenseModalSubtitle");
+
+      if (claimId) {
+        const claim = currentVaultState.reimbursements.find(r => r.id === claimId);
+        if (!claim) return;
+        document.getElementById("expenseId").value = claim.id;
+        document.getElementById("expenseDescription").value = claim.description || "";
+        document.getElementById("expenseCategory").value = claim.category || "Care & Medical";
+        document.getElementById("expenseAmount").value = claim.amount !== undefined ? claim.amount : 0;
+        document.getElementById("expensePaidBy").value = claim.paidBy || "Mark & Shelly Matthews";
+        document.getElementById("expenseDate").value = claim.date || new Date().toISOString().split("T")[0];
+        document.getElementById("expenseMethod").value = claim.method || "";
+        document.getElementById("expenseRef").value = claim.refNum || "";
+        document.getElementById("expenseStatus").value = claim.status || "Pending Reverse Mortgage";
+        document.getElementById("expensePoaApproved").checked = claim.poaApproved !== false;
+        document.getElementById("expenseNotes").value = claim.notes || "";
+
+        stagedExpenseAttachments = JSON.parse(JSON.stringify(claim.attachments || []));
+
+        titleEl.textContent = `Edit Reimbursement Claim (${claim.id})`;
+        subTitleEl.textContent = "Modify advance details, payer, amounts, or update receipt attachments.";
+        saveBtn.textContent = "Save Changes";
+        if (delBtn) delBtn.classList.remove("hidden");
+      } else {
+        document.getElementById("expenseId").value = "";
+        document.getElementById("expenseDate").value = new Date().toISOString().split("T")[0];
+        document.getElementById("expenseStatus").value = "Pending Reverse Mortgage";
+        document.getElementById("expensePoaApproved").checked = true;
+        stagedExpenseAttachments = [];
+
+        titleEl.textContent = "Log Out-of-Pocket Expense";
+        subTitleEl.textContent = "Record an advance to be reimbursed from the reverse mortgage or estate.";
+        saveBtn.textContent = "Add Expense";
+        if (delBtn) delBtn.classList.add("hidden");
+      }
+
+      renderStagedAttachments();
       document.getElementById("addExpenseModal").classList.remove("hidden");
+
+      if (focusReceipts) {
+        setTimeout(() => {
+          const drop = document.getElementById("receiptDropzone");
+          if (drop) drop.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150);
+      }
     }
 
-    async function handleAddExpenseSubmit(e) {
+    function openAddExpenseModal() {
+      openExpenseModal(null);
+    }
+
+    async function handleExpenseSubmit(e) {
       e.preventDefault();
-      const claimId = "CLM-" + Date.now().toString().slice(-6);
-      const newExp = {
-        id: claimId,
+      const claimId = document.getElementById("expenseId").value;
+      const isEdit = !!claimId;
+
+      let claim = null;
+      if (isEdit) {
+        claim = currentVaultState.reimbursements.find(r => r.id === claimId);
+      }
+
+      const claimData = {
+        id: isEdit ? claimId : ("CLM-" + Date.now().toString().slice(-6)),
         date: document.getElementById("expenseDate").value,
         description: document.getElementById("expenseDescription").value.trim(),
         category: document.getElementById("expenseCategory").value,
@@ -2638,22 +3543,160 @@
         method: document.getElementById("expenseMethod").value.trim() || "Out of Pocket",
         refNum: document.getElementById("expenseRef").value.trim(),
         amount: parseFloat(document.getElementById("expenseAmount").value) || 0,
-        status: "Pending Reverse Mortgage",
-        poaApproved: true,
-        notes: document.getElementById("expenseNotes").value.trim()
+        status: document.getElementById("expenseStatus").value,
+        poaApproved: document.getElementById("expensePoaApproved").checked,
+        notes: document.getElementById("expenseNotes").value.trim(),
+        attachments: stagedExpenseAttachments
       };
 
-      currentVaultState.reimbursements.unshift(newExp);
+      if (isEdit && claim) {
+        if (claim.originalBillAmount !== undefined) claimData.originalBillAmount = claim.originalBillAmount;
+        if (claim.savings !== undefined) claimData.savings = claim.savings;
+        if (claim.linkedBillId !== undefined) claimData.linkedBillId = claim.linkedBillId;
+
+        const idx = currentVaultState.reimbursements.findIndex(r => r.id === claimId);
+        if (idx !== -1) {
+          currentVaultState.reimbursements[idx] = claimData;
+        }
+      } else {
+        currentVaultState.reimbursements.unshift(claimData);
+      }
+
       await persistVault();
       closeModal("addExpenseModal");
       renderAllViews();
     }
 
+    async function deleteCurrentEditExpense() {
+      const claimId = document.getElementById("expenseId").value;
+      if (!claimId) return;
+      await deleteReimbursement(claimId);
+      closeModal("addExpenseModal");
+    }
+
     async function deleteReimbursement(claimId) {
-      if (confirm("Delete this reimbursement record?")) {
+      if (confirm("Are you sure you want to remove this reimbursement claim and all attached receipt evidence?")) {
         currentVaultState.reimbursements = currentVaultState.reimbursements.filter(r => r.id !== claimId);
         await persistVault();
         renderAllViews();
+      }
+    }
+
+    /* ================= RECEIPT VIEWER MODAL ================= */
+    let activeViewerClaim = null;
+    let activeViewerIndex = 0;
+    let activeViewerRotation = 0;
+
+    function openReceiptViewer(claimId, attachmentIndex = 0) {
+      const claim = currentVaultState.reimbursements.find(r => r.id === claimId);
+      if (!claim) return;
+
+      if (!claim.attachments || claim.attachments.length === 0) {
+        if (confirm(`No receipts attached to "${claim.description}" yet. Would you like to attach one now?`)) {
+          openExpenseModal(claim.id, true);
+        }
+        return;
+      }
+
+      activeViewerClaim = claim;
+      activeViewerRotation = 0;
+      renderReceiptViewerContent(attachmentIndex);
+      document.getElementById("receiptViewerModal").classList.remove("hidden");
+    }
+
+    function renderReceiptViewerContent(index = 0) {
+      if (!activeViewerClaim || !activeViewerClaim.attachments || activeViewerClaim.attachments.length === 0) return;
+
+      activeViewerIndex = Math.max(0, Math.min(index, activeViewerClaim.attachments.length - 1));
+      const att = activeViewerClaim.attachments[activeViewerIndex];
+      activeViewerRotation = 0;
+
+      document.getElementById("receiptViewerTitle").textContent = activeViewerClaim.description;
+      document.getElementById("receiptViewerMeta").textContent = `${activeViewerClaim.paidBy} • ${activeViewerClaim.date} • ${formatMoney(activeViewerClaim.amount)} ${activeViewerClaim.refNum ? '• Ref: ' + activeViewerClaim.refNum : ''}`;
+
+      // Tabs container for multi-receipts
+      const tabs = document.getElementById("receiptViewerTabsContainer");
+      if (activeViewerClaim.attachments.length > 1) {
+        tabs.classList.remove("hidden");
+        tabs.innerHTML = "";
+        activeViewerClaim.attachments.forEach((a, idx) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          const isActive = idx === activeViewerIndex;
+          btn.className = `px-3 py-1 rounded-lg font-semibold transition ${
+            isActive 
+              ? 'bg-emerald-600 text-white shadow-sm' 
+              : 'bg-white hover:bg-slate-200 text-slate-700 border border-slate-300'
+          }`;
+          btn.textContent = `${idx + 1}. ${a.type === 'pdf' ? 'PDF' : 'Photo'} (${formatFileSize(a.size)})`;
+          btn.onclick = () => renderReceiptViewerContent(idx);
+          tabs.appendChild(btn);
+        });
+      } else {
+        tabs.classList.add("hidden");
+      }
+
+      // Content rendering
+      const content = document.getElementById("receiptViewerContent");
+      const rotateBtn = document.getElementById("receiptViewerRotateBtn");
+
+      if (att.type === "image") {
+        rotateBtn.classList.remove("hidden");
+        content.innerHTML = `
+          <div class="relative max-h-[70vh] flex items-center justify-center overflow-hidden">
+            <img id="viewerImage" src="${att.dataUrl}" alt="Receipt Photo" class="max-h-[70vh] max-w-full object-contain rounded-lg shadow transition-transform duration-200" style="transform: rotate(0deg)" />
+          </div>
+        `;
+      } else {
+        rotateBtn.classList.add("hidden");
+        content.innerHTML = `
+          <iframe src="${att.dataUrl}" class="w-full h-[65vh] rounded-lg border border-slate-300 bg-white" title="PDF Receipt Viewer"></iframe>
+        `;
+      }
+
+      document.getElementById("receiptViewerFileInfo").textContent = `File: ${att.name} • ${formatFileSize(att.size)} • Added: ${att.dateAdded ? new Date(att.dateAdded).toLocaleDateString() : 'N/A'}`;
+    }
+
+    function rotateReceiptViewerImage() {
+      const img = document.getElementById("viewerImage");
+      if (!img) return;
+      activeViewerRotation = (activeViewerRotation + 90) % 360;
+      img.style.transform = `rotate(${activeViewerRotation}deg)`;
+    }
+
+    function downloadActiveReceipt() {
+      if (!activeViewerClaim || !activeViewerClaim.attachments) return;
+      const att = activeViewerClaim.attachments[activeViewerIndex];
+      if (!att) return;
+      const a = document.createElement("a");
+      a.href = att.dataUrl;
+      a.download = att.name || "receipt";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function openActiveReceiptInNewTab() {
+      if (!activeViewerClaim || !activeViewerClaim.attachments) return;
+      const att = activeViewerClaim.attachments[activeViewerIndex];
+      if (!att) return;
+      
+      const win = window.open();
+      if (win) {
+        if (att.type === "pdf") {
+          win.document.write(`<title>${att.name}</title><iframe src="${att.dataUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+        } else {
+          win.document.write(`<title>${att.name}</title><body style="margin:0; background:#111; display:flex; align-items:center; justify-content:center; min-height:100vh;"><img src="${att.dataUrl}" style="max-width:100%; max-height:100vh;" /></body>`);
+        }
+      }
+    }
+
+    function editClaimFromViewer() {
+      if (!activeViewerClaim) return;
+      const claimId = activeViewerClaim.id;
+      closeModal("receiptViewerModal");
+      if (claimId !== "preview") {
+        openExpenseModal(claimId);
       }
     }
 
@@ -2992,9 +4035,10 @@
       csv += `"Combined Family Settlement Demand",${(markShelly + laurie + autumn).toFixed(2)},"Authorized by Autumn Aguilar (POA)"\n\n`;
 
       csv += "SECTION 2: ITEMIZED REIMBURSEMENT LEDGER (CLAIMS FOR REVERSE MORTGAGE)\n";
-      csv += "Claim ID,Date,Description,Category,Paid By,Payment Method,Ref / Check #,Amount Paid,Original Amount,Savings Achieved,POA Approved?,Status,Notes\n";
+      csv += "Claim ID,Date,Description,Category,Paid By,Payment Method,Ref / Check #,Amount Paid,Original Amount,Savings Achieved,Receipt Evidence,POA Approved?,Status,Notes\n";
       currentVaultState.reimbursements.forEach(r => {
-        csv += `"${r.id}","${r.date}","${(r.description||'').replace(/"/g, '""')}","${r.category}","${r.paidBy}","${r.method}","${r.refNum}",${Number(r.amount).toFixed(2)},${r.originalBillAmount ? Number(r.originalBillAmount).toFixed(2) : Number(r.amount).toFixed(2)},${r.savings ? Number(r.savings).toFixed(2) : "0.00"},"Yes","${r.status}","${(r.notes||'').replace(/"/g, '""')}"\n`;
+        const receiptCount = (r.attachments && r.attachments.length > 0) ? `${r.attachments.length} attached` : "None";
+        csv += `"${r.id}","${r.date}","${(r.description||'').replace(/"/g, '""')}","${r.category}","${r.paidBy}","${r.method}","${r.refNum}",${Number(r.amount).toFixed(2)},${r.originalBillAmount ? Number(r.originalBillAmount).toFixed(2) : Number(r.amount).toFixed(2)},${r.savings ? Number(r.savings).toFixed(2) : "0.00"},"${receiptCount}","Yes","${r.status}","${(r.notes||'').replace(/"/g, '""')}"\n`;
       });
       csv += "\n";
 
