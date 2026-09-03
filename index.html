@@ -176,19 +176,28 @@
         <div class="rounded-xl bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-emerald-500/10 border border-amber-200/80 p-5 shadow-sm">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-start space-x-3.5">
-              <div class="p-2.5 bg-amber-500 text-white rounded-xl shadow-md">
+              <div class="p-2.5 bg-amber-500 text-white rounded-xl shadow-md flex-shrink-0">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                 </svg>
               </div>
               <div>
-                <h3 class="text-base font-bold text-slate-900">Family Care Team & Immediate Action Items</h3>
-                <p class="text-xs text-slate-600 mt-1 max-w-3xl">
+                <div class="flex items-center space-x-2">
+                  <h3 id="dashboardBannerTitle" class="text-base font-bold text-slate-900">Family Care Team & Immediate Action Items</h3>
+                  <button onclick="openEditDashboardMessageModal()" title="Edit announcement message" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100/70 rounded transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                  </button>
+                </div>
+                <div id="dashboardBannerMessage" class="text-xs text-slate-600 mt-1 max-w-3xl leading-relaxed">
                   <strong>Autumn Aguilar</strong> holds legal Power of Attorney (POA). <strong>Laurie Salse</strong> is on-site in Sun City caring for Renee and going to Chase Bank tomorrow morning. <strong>Mark & Shelly Matthews</strong> are advancing funds to cure arrears. All family advances are tracked for reverse mortgage reimbursement.
-                </p>
+                </div>
               </div>
             </div>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2 items-center flex-shrink-0">
+              <button onclick="openEditDashboardMessageModal()" class="inline-flex items-center px-3 py-2 rounded-lg bg-white border border-amber-300/90 text-amber-900 text-xs font-semibold hover:bg-amber-50 shadow-xs transition">
+                <svg class="w-3.5 h-3.5 mr-1 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Edit Message
+              </button>
               <button onclick="switchTab('reimbursements')" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition">
                 View Reimbursement Claim
               </button>
@@ -1549,6 +1558,51 @@
     </div>
   </div>
 
+  <!-- Modal: Edit Dashboard Announcement / Care Team Message -->
+  <div id="editDashboardMessageModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="p-1.5 bg-amber-100 text-amber-800 rounded-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-slate-900 text-base">Edit Dashboard Care Team Alert</h3>
+        </div>
+        <button onclick="closeModal('editDashboardMessageModal')" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+      </div>
+
+      <form id="editDashboardMessageForm" onsubmit="handleSaveDashboardMessage(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Banner Title *</label>
+          <input type="text" id="editDashboardBannerTitle" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-semibold focus:ring-2 focus:ring-amber-500 focus:border-amber-500" placeholder="e.g. Family Care Team & Immediate Action Items" />
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block font-semibold text-slate-700">Banner Message *</label>
+            <button type="button" onclick="resetDashboardMessageDefault()" class="text-[11px] text-amber-700 hover:underline font-semibold">
+              Reset to Default
+            </button>
+          </div>
+          <textarea id="editDashboardBannerMessage" rows="5" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-normal leading-relaxed focus:ring-2 focus:ring-amber-500 focus:border-amber-500" placeholder="Enter care team message or status announcement..."></textarea>
+          <p class="text-[11px] text-slate-500 mt-1">Supports plain text, new lines, and formatting tags (e.g. &lt;strong&gt;Name&lt;/strong&gt;).</p>
+        </div>
+
+        <div class="pt-3 flex justify-between items-center border-t border-slate-100">
+          <button type="button" onclick="resetDashboardMessageDefault()" class="px-3 py-2 text-slate-600 hover:text-slate-800 text-xs font-medium">
+            Reset to Default
+          </button>
+          <div class="flex space-x-2">
+            <button type="button" onclick="closeModal('editDashboardMessageModal')" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">Cancel</button>
+            <button type="submit" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold shadow-md shadow-amber-600/20">Save Message</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal: Change Passphrase -->
   <div id="changePassphraseModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
@@ -2318,6 +2372,11 @@
       }
     ];
 
+    const DEFAULT_DASHBOARD_MESSAGE = {
+      title: "Family Care Team & Immediate Action Items",
+      message: "<strong>Autumn Aguilar</strong> holds legal Power of Attorney (POA). <strong>Laurie Salse</strong> is on-site in Sun City caring for Renee and going to Chase Bank tomorrow morning. <strong>Mark & Shelly Matthews</strong> are advancing funds to cure arrears. All family advances are tracked for reverse mortgage reimbursement."
+    };
+
     /* ================= DATA RENDERING ================= */
     function renderAllViews() {
       if (!currentVaultState) return;
@@ -2378,6 +2437,9 @@
 
     function renderDashboard() {
       if (!currentVaultState) return;
+
+      // 0. Render Announcement Banner
+      renderDashboardBanner();
 
       // 1. Calculate Overdue Debt (Exclude paid bills and fraud dispute)
       const unpaidBills = currentVaultState.bills.filter(b => b.status !== "Paid" && b.status !== "Autopay");
@@ -4003,6 +4065,72 @@
       await persistVault();
       closeModal("editInsuranceModal");
       renderInsuranceCard();
+    }
+
+    /* ================= DASHBOARD BANNER MESSAGE ================= */
+    function renderDashboardBanner() {
+      const bannerData = (currentVaultState && currentVaultState.meta && currentVaultState.meta.dashboardMessage)
+        || DEFAULT_DASHBOARD_MESSAGE;
+
+      const titleEl = document.getElementById("dashboardBannerTitle");
+      const msgEl = document.getElementById("dashboardBannerMessage");
+
+      if (titleEl) {
+        titleEl.textContent = bannerData.title || DEFAULT_DASHBOARD_MESSAGE.title;
+      }
+      if (msgEl) {
+        let msgHtml = bannerData.message || DEFAULT_DASHBOARD_MESSAGE.message;
+        // Convert any newline breaks to <br>
+        msgHtml = msgHtml.replace(/(\r\n|\n|\r)/g, "<br>");
+        // Prevent excess multiple consecutive line breaks
+        msgHtml = msgHtml.replace(/(<br\s*\/?>\s*){3,}/gi, "<br><br>");
+        msgEl.innerHTML = msgHtml;
+      }
+    }
+
+    function openEditDashboardMessageModal() {
+      const bannerData = (currentVaultState && currentVaultState.meta && currentVaultState.meta.dashboardMessage)
+        || DEFAULT_DASHBOARD_MESSAGE;
+
+      const titleInput = document.getElementById("editDashboardBannerTitle");
+      const messageInput = document.getElementById("editDashboardBannerMessage");
+
+      if (titleInput) {
+        titleInput.value = bannerData.title || DEFAULT_DASHBOARD_MESSAGE.title;
+      }
+      if (messageInput) {
+        let textVal = (bannerData.message || DEFAULT_DASHBOARD_MESSAGE.message)
+          .replace(/<br\s*\/?>/gi, "\n");
+        messageInput.value = textVal;
+      }
+
+      document.getElementById("editDashboardMessageModal").classList.remove("hidden");
+    }
+
+    function resetDashboardMessageDefault() {
+      const titleInput = document.getElementById("editDashboardBannerTitle");
+      const messageInput = document.getElementById("editDashboardBannerMessage");
+
+      if (titleInput) titleInput.value = DEFAULT_DASHBOARD_MESSAGE.title;
+      if (messageInput) messageInput.value = DEFAULT_DASHBOARD_MESSAGE.message.replace(/<br\s*\/?>/gi, "\n");
+    }
+
+    async function handleSaveDashboardMessage(e) {
+      e.preventDefault();
+      if (!currentVaultState) return;
+      if (!currentVaultState.meta) currentVaultState.meta = {};
+
+      const titleVal = document.getElementById("editDashboardBannerTitle").value.trim();
+      const msgVal = document.getElementById("editDashboardBannerMessage").value.trim();
+
+      currentVaultState.meta.dashboardMessage = {
+        title: titleVal || DEFAULT_DASHBOARD_MESSAGE.title,
+        message: msgVal || DEFAULT_DASHBOARD_MESSAGE.message
+      };
+
+      await persistVault();
+      closeModal("editDashboardMessageModal");
+      renderDashboardBanner();
     }
 
     /* ================= EXPORT & BACKUP ================= */
