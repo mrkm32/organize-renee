@@ -2059,13 +2059,13 @@
         }
 
         const remoteDecrypted = await decryptPayload(payload, window.masterPassphraseCache);
-        if (confirm(`Remote vault retrieved (Last updated: ${remoteDecrypted.meta ? remoteDecrypted.meta.lastUpdated : 'Unknown'}). Load this version now?`)) {
-          currentVaultState = remoteDecrypted;
+        if (confirm(`Remote vault retrieved (Last updated: ${remoteDecrypted.meta ? remoteDecrypted.meta.lastUpdated : 'Unknown'}). Merge with your local entries now?`)) {
+          currentVaultState = mergeVaultStates(currentVaultState, remoteDecrypted);
           await persistVault(true);
           cfg.lastSynced = new Date().toISOString();
           saveGitHubSyncConfig(cfg);
           renderAllViews();
-          alert("Vault updated from GitHub!");
+          alert("Vault merged and updated from GitHub!");
           closeModal("gitHubSyncModal");
         }
       } catch (err) {
@@ -2122,6 +2122,77 @@
 
       updateGitHubSyncUI();
     });
+
+    // Bidirectionally merge two decrypted vault states so no claims or changes are lost
+    function mergeVaultStates(localState, remoteState) {
+      if (!localState && !remoteState) return null;
+      if (!localState) return remoteState;
+      if (!remoteState) return localState;
+
+      const localTime = new Date(localState.meta?.lastUpdated || 0).getTime();
+      const remoteTime = new Date(remoteState.meta?.lastUpdated || 0).getTime();
+
+      // Base clone from newer metadata
+      const newer = remoteTime >= localTime ? remoteState : localState;
+      const older = remoteTime >= localTime ? localState : remoteState;
+      const merged = JSON.parse(JSON.stringify(newer));
+
+      // 1. Merge Reimbursements: Keep ALL claims from BOTH local and remote
+      if (Array.isArray(older.reimbursements)) {
+        if (!Array.isArray(merged.reimbursements)) merged.reimbursements = [];
+        older.reimbursements.forEach(oldClaim => {
+          const idx = merged.reimbursements.findIndex(r => r.id === oldClaim.id);
+          if (idx === -1) {
+            // Claim exists in older/local state but missing in remote: PRESERVE IT!
+            merged.reimbursements.push(oldClaim);
+          } else {
+            // Claim exists in both: merge receipts/attachments if older has them and newer does not
+            const currentClaim = merged.reimbursements[idx];
+            const currentReceipts = currentClaim.attachments || currentClaim.receipts || [];
+            const oldReceipts = oldClaim.attachments || oldClaim.receipts || [];
+            if (currentReceipts.length === 0 && oldReceipts.length > 0) {
+              merged.reimbursements[idx].attachments = oldReceipts;
+            }
+          }
+        });
+      }
+
+      // 2. Merge Bills: Keep all custom or newly added bills
+      if (Array.isArray(older.bills)) {
+        if (!Array.isArray(merged.bills)) merged.bills = [];
+        older.bills.forEach(oldBill => {
+          if (!merged.bills.some(b => b.id === oldBill.id)) {
+            merged.bills.push(oldBill);
+          }
+        });
+      }
+
+      // 3. Merge Action Items: Keep all action items from both
+      if (Array.isArray(older.actionItems)) {
+        if (!Array.isArray(merged.actionItems)) merged.actionItems = [];
+        older.actionItems.forEach(oldItem => {
+          if (!merged.actionItems.some(item => item.id === oldItem.id)) {
+            merged.actionItems.push(oldItem);
+          }
+        });
+      }
+
+      // 4. Merge Call Logs: Keep all call logs
+      if (Array.isArray(older.callLogs)) {
+        if (!Array.isArray(merged.callLogs)) merged.callLogs = [];
+        older.callLogs.forEach(oldLog => {
+          if (!merged.callLogs.some(l => l.id === oldLog.id)) {
+            merged.callLogs.push(oldLog);
+          }
+        });
+      }
+
+      // 5. Update timestamp so merged state is recognized as current
+      if (!merged.meta) merged.meta = {};
+      merged.meta.lastUpdated = new Date(Math.max(localTime, remoteTime, Date.now())).toISOString();
+
+      return merged;
+    }
 
     async function handleAuthSubmit(e) {
       e.preventDefault();
@@ -2181,14 +2252,8 @@
         }
 
         if (localState && remoteState) {
-          const localTime = new Date(localState.meta?.lastUpdated || 0).getTime();
-          const remoteTime = new Date(remoteState.meta?.lastUpdated || 0).getTime();
-          if (remoteTime > localTime) {
-            restoredState = remoteState;
-            console.log("Loaded newer vault from GitHub sync");
-          } else {
-            restoredState = localState;
-          }
+          restoredState = mergeVaultStates(localState, remoteState);
+          console.log("Intelligently merged local and GitHub vault states without dropping entries");
         } else if (remoteState) {
           restoredState = remoteState;
         } else if (localState) {
