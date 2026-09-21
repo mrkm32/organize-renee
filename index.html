@@ -4368,10 +4368,24 @@
       URL.revokeObjectURL(url);
     }
 
-    function downloadEncryptedBackup() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const blob = new Blob([raw], { type: "application/json" });
+    async function downloadEncryptedBackup() {
+      let payload = await idbGetVault();
+      if (!payload) {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          try { payload = JSON.parse(raw); } catch (e) {}
+        }
+      }
+      if (!payload && currentVaultState && window.masterPassphraseCache) {
+        try {
+          payload = await encryptState(currentVaultState, window.masterPassphraseCache);
+        } catch (e) {}
+      }
+      if (!payload) {
+        alert("No vault payload available to export.");
+        return;
+      }
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -4382,7 +4396,7 @@
       URL.revokeObjectURL(url);
     }
 
-    function handleRestoreBackup(e) {
+    async function handleRestoreBackup(e) {
       const file = e.target.files[0];
       if (!file) return;
 
@@ -4395,13 +4409,14 @@
             alert("Invalid backup file format.");
             return;
           }
-          if (confirm("Restore this backup? This will replace your local browser vault.")) {
-            localStorage.setItem(STORAGE_KEY, contents);
-            alert("Backup restored! Please unlock using the passphrase that encrypted this backup.");
+          if (confirm("Restore this backup? This will update your local browser vault.")) {
+            await idbSetVault(parsed);
+            try { localStorage.setItem(STORAGE_KEY, contents); } catch (e) {}
+            alert("Backup restored! Reloading...");
             window.location.reload();
           }
         } catch (err) {
-          alert("Error reading backup file: " + err.message);
+          alert("Error restoring backup: " + err.message);
         }
       };
       reader.readAsText(file);
