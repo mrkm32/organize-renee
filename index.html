@@ -141,7 +141,7 @@
           <div>
             <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Family Passphrase</label>
             <div class="relative">
-              <input type="password" id="passphraseInput" required placeholder="Enter passphrase..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 pr-10 text-sm transition" />
+              <input type="password" id="passphraseInput" required placeholder="Enter passphrase..." autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 pr-10 text-sm transition" />
               <button type="button" onclick="togglePasswordVisibility('passphraseInput')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               </button>
@@ -150,7 +150,7 @@
 
           <div id="confirmPassphraseBlock" class="hidden">
             <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Confirm Passphrase</label>
-            <input type="password" id="confirmPassphraseInput" placeholder="Confirm your passphrase..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 text-sm transition" />
+            <input type="password" id="confirmPassphraseInput" placeholder="Confirm your passphrase..." autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800 text-sm transition" />
           </div>
 
           <div id="authErrorMsg" class="hidden p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium"></div>
@@ -935,119 +935,121 @@
   </div>
 
   <!-- Modal: Add / Edit Custom Expense & Receipts -->
-  <div id="addExpenseModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 my-8 max-h-[92vh] flex flex-col">
+  <div id="addExpenseModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto" onclick="handleBackdropClick(event, 'addExpenseModal')">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-4 sm:p-6 shadow-2xl border border-slate-200 my-auto max-h-[95dvh] sm:max-h-[90vh] flex flex-col overflow-hidden" onclick="event.stopPropagation()">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3 flex-shrink-0">
         <div>
           <h3 class="font-bold text-slate-900 text-base" id="expenseModalTitle">Log Out-of-Pocket Expense</h3>
           <p class="text-[11px] text-slate-500 mt-0.5" id="expenseModalSubtitle">Record an advance to be reimbursed from the reverse mortgage or estate.</p>
         </div>
-        <button onclick="closeModal('addExpenseModal')" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+        <button type="button" onclick="closeModal('addExpenseModal')" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1">&times;</button>
       </div>
 
-      <form id="addExpenseForm" onsubmit="handleExpenseSubmit(event)" class="space-y-3 text-xs overflow-y-auto pr-1 flex-1">
+      <form id="addExpenseForm" onsubmit="handleExpenseSubmit(event)" class="flex flex-col flex-1 min-h-0">
         <input type="hidden" id="expenseId" />
 
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Expense Description *</label>
-          <input type="text" id="expenseDescription" required placeholder="e.g. SCE Edison Utility Bill, Medication, Storage Locks, Attorney Fee" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-3 text-xs overflow-y-auto pr-1 flex-1 min-h-0 py-2">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Category</label>
-            <select id="expenseCategory" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
-              <option value="Care & Medical">Care & Medical</option>
-              <option value="Home & Utilities">Home & Utilities</option>
-              <option value="Legal & Financial">Legal & Financial</option>
-              <option value="Storage & Property">Storage & Property</option>
-              <option value="Groceries & Daily Living">Groceries & Daily Living</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Amount ($) *</label>
-            <input type="number" step="0.01" id="expenseAmount" required placeholder="0.00" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-900" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Paid By *</label>
-            <select id="expensePaidBy" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-semibold text-slate-800">
-              <option value="Mark & Shelly Matthews">Mark & Shelly Matthews</option>
-              <option value="Laurie Salse">Laurie Salse</option>
-              <option value="Autumn Aguilar">Autumn Aguilar</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Date Incurred *</label>
-            <input type="date" id="expenseDate" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Payment Method</label>
-            <input type="text" id="expenseMethod" placeholder="e.g. Visa, Debit, Check, Cash, Zelle" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Ref / Receipt / Check #</label>
-            <input type="text" id="expenseRef" placeholder="e.g. Receipt #984, Check #1042" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Claim Status</label>
-            <select id="expenseStatus" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
-              <option value="Pending Reverse Mortgage">Pending Reverse Mortgage</option>
-              <option value="Under Review">Under Review</option>
-              <option value="Reimbursed">Reimbursed</option>
-              <option value="Settled">Settled</option>
-            </select>
-          </div>
-          <div class="flex items-center pt-5">
-            <label class="inline-flex items-center cursor-pointer">
-              <input type="checkbox" id="expensePoaApproved" class="rounded border-slate-300 text-purple-600 focus:ring-purple-500 w-4 h-4" checked />
-              <span class="ml-2 font-medium text-slate-700">POA Acknowledged</span>
-            </label>
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-semibold text-slate-700 mb-1">Notes / Purpose</label>
-          <textarea id="expenseNotes" rows="2" placeholder="Item details, purpose for estate care, invoice notes..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
-        </div>
-
-        <!-- Receipt Attachments Section -->
-        <div class="border-t border-slate-200 pt-3 space-y-2">
-          <div class="flex justify-between items-center">
-            <label class="block font-bold text-slate-800 text-xs flex items-center">
-              <svg class="w-3.5 h-3.5 mr-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
-              Receipt Evidence (Photos & PDFs)
-            </label>
-            <span id="stagedAttachmentCount" class="text-[11px] text-slate-400 font-mono">0 files attached</span>
+            <label class="block font-semibold text-slate-700 mb-1">Expense Description *</label>
+            <input type="text" id="expenseDescription" required placeholder="e.g. SCE Edison Utility Bill, Medication, Storage Locks, Attorney Fee" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800 font-medium" />
           </div>
 
-          <div id="receiptDropzone" onclick="triggerReceiptFileInput()" class="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl p-3.5 text-center cursor-pointer bg-slate-50/70 hover:bg-emerald-50/40 transition group">
-            <input type="file" id="receiptFileInput" accept="image/*,application/pdf" multiple class="hidden" onchange="handleReceiptFilesSelected(event)" />
-            <div class="flex flex-col items-center justify-center space-y-1">
-              <div class="w-7 h-7 rounded-full bg-slate-100 group-hover:bg-emerald-100 flex items-center justify-center text-slate-500 group-hover:text-emerald-600 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              </div>
-              <p class="text-xs font-semibold text-slate-700">Click or drag & drop to attach receipts</p>
-              <p class="text-[11px] text-slate-400">Camera photos (auto-optimized) or PDF receipts (Max 2.5MB per PDF)</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Category</label>
+              <select id="expenseCategory" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
+                <option value="Care & Medical">Care & Medical</option>
+                <option value="Home & Utilities">Home & Utilities</option>
+                <option value="Legal & Financial">Legal & Financial</option>
+                <option value="Storage & Property">Storage & Property</option>
+                <option value="Groceries & Daily Living">Groceries & Daily Living</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Amount ($) *</label>
+              <input type="number" step="0.01" id="expenseAmount" required placeholder="0.00" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-900" />
             </div>
           </div>
 
-          <!-- Staged Attachments List -->
-          <div id="stagedAttachmentsList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
-            <!-- Injected via JS -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Paid By *</label>
+              <select id="expensePaidBy" class="w-full px-3 py-2 border border-slate-300 rounded-lg font-semibold text-slate-800">
+                <option value="Mark & Shelly Matthews">Mark & Shelly Matthews</option>
+                <option value="Laurie Salse">Laurie Salse</option>
+                <option value="Autumn Aguilar">Autumn Aguilar</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Date Incurred *</label>
+              <input type="date" id="expenseDate" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Payment Method</label>
+              <input type="text" id="expenseMethod" placeholder="e.g. Visa, Debit, Check, Cash, Zelle" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Ref / Receipt / Check #</label>
+              <input type="text" id="expenseRef" placeholder="e.g. Receipt #984, Check #1042" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Claim Status</label>
+              <select id="expenseStatus" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800">
+                <option value="Pending Reverse Mortgage">Pending Reverse Mortgage</option>
+                <option value="Under Review">Under Review</option>
+                <option value="Reimbursed">Reimbursed</option>
+                <option value="Settled">Settled</option>
+              </select>
+            </div>
+            <div class="flex items-center pt-5">
+              <label class="inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="expensePoaApproved" class="rounded border-slate-300 text-purple-600 focus:ring-purple-500 w-4 h-4" checked />
+                <span class="ml-2 font-medium text-slate-700">POA Acknowledged</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Notes / Purpose</label>
+            <textarea id="expenseNotes" rows="2" placeholder="Item details, purpose for estate care, invoice notes..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-800"></textarea>
+          </div>
+
+          <!-- Receipt Attachments Section -->
+          <div class="border-t border-slate-200 pt-3 space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="block font-bold text-slate-800 text-xs flex items-center">
+                <svg class="w-3.5 h-3.5 mr-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                Receipt Evidence (Photos & PDFs)
+              </label>
+              <span id="stagedAttachmentCount" class="text-[11px] text-slate-400 font-mono">0 files attached</span>
+            </div>
+
+            <div id="receiptDropzone" onclick="triggerReceiptFileInput()" class="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-xl p-3.5 text-center cursor-pointer bg-slate-50/70 hover:bg-emerald-50/40 transition group">
+              <input type="file" id="receiptFileInput" accept="image/*,application/pdf" multiple class="hidden" onchange="handleReceiptFilesSelected(event)" />
+              <div class="flex flex-col items-center justify-center space-y-1">
+                <div class="w-7 h-7 rounded-full bg-slate-100 group-hover:bg-emerald-100 flex items-center justify-center text-slate-500 group-hover:text-emerald-600 transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <p class="text-xs font-semibold text-slate-700">Click or drag & drop to attach receipts</p>
+                <p class="text-[11px] text-slate-400">Camera photos (auto-optimized) or PDF receipts (Max 2.5MB per PDF)</p>
+              </div>
+            </div>
+
+            <!-- Staged Attachments List -->
+            <div id="stagedAttachmentsList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+              <!-- Injected via JS -->
+            </div>
           </div>
         </div>
 
-        <div class="pt-3 flex justify-between items-center border-t border-slate-100 flex-shrink-0">
+        <div class="pt-3 mt-1 flex justify-between items-center border-t border-slate-100 flex-shrink-0 bg-white">
           <button type="button" id="deleteExpenseBtn" onclick="deleteCurrentEditExpense()" class="hidden px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-semibold transition">
             Delete Claim
           </button>
@@ -1061,18 +1063,26 @@
   </div>
 
   <!-- Modal: Receipt Document / Photo Viewer -->
-  <div id="receiptViewerModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
-    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-700 overflow-hidden">
+  <div id="receiptViewerModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[60] flex items-center justify-center p-2 sm:p-4 overflow-y-auto" onclick="handleBackdropClick(event, 'receiptViewerModal')">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[95dvh] sm:max-h-[92vh] flex flex-col shadow-2xl border border-slate-700 overflow-hidden my-auto" onclick="event.stopPropagation()">
       <!-- Modal Header -->
-      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 flex-shrink-0">
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Receipt Evidence</span>
-            <h3 class="font-bold text-slate-900 text-sm sm:text-base" id="receiptViewerTitle">Receipt Proof</h3>
+      <div class="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 flex-shrink-0 gap-2">
+        <!-- Left: Back Button & Title Info -->
+        <div class="flex items-center space-x-2 min-w-0 flex-1">
+          <button type="button" onclick="closeModal('receiptViewerModal')" class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold transition flex-shrink-0" title="Close / Back">
+            <svg class="w-4 h-4 mr-1 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            <span>Back</span>
+          </button>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center space-x-1.5 truncate">
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 flex-shrink-0">Receipt</span>
+              <h3 class="font-bold text-slate-900 text-xs sm:text-base truncate" id="receiptViewerTitle">Receipt Proof</h3>
+            </div>
+            <p class="text-[11px] text-slate-500 truncate mt-0.5" id="receiptViewerMeta">Loading...</p>
           </div>
-          <p class="text-xs text-slate-500 mt-0.5" id="receiptViewerMeta">Loading...</p>
         </div>
-        <div class="flex items-center space-x-1.5">
+        <!-- Right: Actions & Close -->
+        <div class="flex items-center space-x-1 sm:space-x-1.5 flex-shrink-0">
           <button id="receiptViewerRotateBtn" onclick="rotateReceiptViewerImage()" title="Rotate 90° Clockwise" class="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 transition hidden">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           </button>
@@ -1082,32 +1092,35 @@
           <button onclick="openActiveReceiptInNewTab()" title="Open in New Tab" class="p-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 transition">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
           </button>
-          <button onclick="closeModal('receiptViewerModal')" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 text-xl font-bold ml-1">&times;</button>
+          <button type="button" onclick="closeModal('receiptViewerModal')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-700 text-lg font-bold transition ml-0.5" title="Close Viewer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
         </div>
       </div>
 
       <!-- Multi-attachment Tabs (shown if > 1 attachment) -->
-      <div id="receiptViewerTabsContainer" class="hidden px-4 py-2 bg-slate-100 border-b border-slate-200 flex items-center space-x-2 overflow-x-auto text-xs flex-shrink-0">
+      <div id="receiptViewerTabsContainer" class="hidden px-3 sm:px-4 py-2 bg-slate-100 border-b border-slate-200 flex items-center space-x-2 overflow-x-auto text-xs flex-shrink-0">
         <!-- Injected via JS -->
       </div>
 
       <!-- Preview Body -->
-      <div class="flex-1 overflow-auto p-4 bg-slate-900/5 flex items-center justify-center min-h-[320px]">
+      <div class="flex-1 overflow-auto p-2 sm:p-4 bg-slate-900/5 flex items-center justify-center min-h-0">
         <div id="receiptViewerContent" class="w-full flex items-center justify-center">
           <!-- Injected via JS: <img> or <iframe> -->
         </div>
       </div>
 
       <!-- Modal Footer -->
-      <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-xs flex-shrink-0">
-        <div id="receiptViewerFileInfo" class="text-slate-500 font-mono text-[11px]">
+      <div class="p-2.5 sm:p-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-xs flex-shrink-0 gap-2">
+        <div id="receiptViewerFileInfo" class="text-slate-500 font-mono text-[10px] sm:text-[11px] truncate flex-1 min-w-0">
           <!-- File info -->
         </div>
-        <div class="flex space-x-2">
-          <button id="receiptViewerEditBtn" onclick="editClaimFromViewer()" class="px-3 py-1.5 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-100 font-semibold transition">
-            Edit Claim & Files
+        <div class="flex space-x-2 flex-shrink-0">
+          <button id="receiptViewerEditBtn" onclick="editClaimFromViewer()" class="px-2.5 sm:px-3 py-1.5 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-100 font-semibold transition text-xs">
+            Edit Claim
           </button>
-          <button onclick="closeModal('receiptViewerModal')" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-semibold transition">
+          <button type="button" onclick="closeModal('receiptViewerModal')" class="px-3 sm:px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-semibold transition text-xs inline-flex items-center">
+            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             Close
           </button>
         </div>
@@ -1672,6 +1685,30 @@
       );
     }
 
+    // Helper: Convert Uint8Array to Base64 in safe chunks to prevent call-stack overflow on large payloads (e.g. photos/PDFs)
+    function uint8ArrayToBase64(bytes) {
+      if (!bytes || bytes.byteLength === 0) return "";
+      let binary = "";
+      const len = bytes.byteLength;
+      const CHUNK_SIZE = 0x8000; // 32KB chunks prevent call-stack overflow in Safari / WebKit
+      for (let i = 0; i < len; i += CHUNK_SIZE) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + CHUNK_SIZE, len)));
+      }
+      return btoa(binary);
+    }
+
+    // Helper: Convert Base64 to Uint8Array safely and memory-efficiently
+    function base64ToUint8Array(base64) {
+      if (!base64) return new Uint8Array(0);
+      const binary = atob(base64);
+      const len = binary.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes;
+    }
+
     // Encrypt object state to JSON with base64 ciphertext, iv, and salt
     async function encryptState(stateObj, passphrase) {
       const salt = crypto.getRandomValues(new Uint8Array(16));
@@ -1685,18 +1722,18 @@
       );
 
       return {
-        salt: btoa(String.fromCharCode(...salt)),
-        iv: btoa(String.fromCharCode(...iv)),
-        data: btoa(String.fromCharCode(...new Uint8Array(ciphertext))),
+        salt: uint8ArrayToBase64(salt),
+        iv: uint8ArrayToBase64(iv),
+        data: uint8ArrayToBase64(new Uint8Array(ciphertext)),
         version: "1.0"
       };
     }
 
     // Decrypt stored payload
     async function decryptPayload(payload, passphrase) {
-      const salt = Uint8Array.from(atob(payload.salt), c => c.charCodeAt(0));
-      const iv = Uint8Array.from(atob(payload.iv), c => c.charCodeAt(0));
-      const ciphertext = Uint8Array.from(atob(payload.data), c => c.charCodeAt(0));
+      const salt = base64ToUint8Array(payload.salt);
+      const iv = base64ToUint8Array(payload.iv);
+      const ciphertext = base64ToUint8Array(payload.data);
 
       const key = await deriveKey(passphrase, salt);
       const decrypted = await crypto.subtle.decrypt(
@@ -1706,6 +1743,7 @@
       );
       return JSON.parse(dec.decode(decrypted));
     }
+
 
     /* ================= INDEXEDDB STORAGE ENGINE (GIGABYTES CAPACITY) ================= */
     const IDB_NAME = "ReneeFamilyVaultDB";
@@ -1903,8 +1941,8 @@
       try {
         const encrypted = await encryptState(currentVaultState, window.masterPassphraseCache);
         const jsonStr = JSON.stringify(encrypted, null, 2);
-        // Base64 encode UTF-8 string safely for GitHub Contents API
-        const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
+        // Base64 encode UTF-8 string safely for GitHub Contents API without stack limits
+        const base64Content = uint8ArrayToBase64(enc.encode(jsonStr));
 
         // 1. Get current file sha if it exists
         let sha = null;
@@ -2157,7 +2195,16 @@
           restoredState = localState;
         } else {
           // Decrypt the pre-encrypted initial family vault
-          restoredState = await decryptPayload(ENCRYPTED_INITIAL_VAULT, pass);
+          try {
+            restoredState = await decryptPayload(ENCRYPTED_INITIAL_VAULT, pass);
+          } catch (initErr) {}
+        }
+
+        // If neither local, remote, nor initial vault could be decrypted, passphrase is wrong
+        if (!restoredState) {
+          errBox.textContent = "Incorrect passphrase. Please check spacing and capitalization.";
+          errBox.classList.remove("hidden");
+          return;
         }
 
         // Auto-merge newly added default bills, action items, and team roles from master vault if missing
@@ -2183,12 +2230,17 @@
         currentVaultState = restoredState;
         window.masterPassphraseCache = pass;
 
-        // Ensure saved to IndexedDB and mirror to localStorage
-        await persistVault(true);
+        // Ensure saved to IndexedDB and mirror to localStorage in background without blocking unlock
+        try {
+          await persistVault(true);
+        } catch (cacheErr) {
+          console.warn("Could not cache decrypted vault locally:", cacheErr);
+        }
+
         unlockAppUI();
       } catch (err) {
-        console.error(err);
-        errBox.textContent = "Incorrect passphrase. Please check spacing and capitalization.";
+        console.error("Auth error:", err);
+        errBox.textContent = "Error unlocking vault: " + (err && err.message ? err.message : String(err));
         errBox.classList.remove("hidden");
       }
     }
@@ -3256,18 +3308,22 @@
 
       for (const file of Array.from(files)) {
         try {
-          if (file.type.startsWith("image/")) {
+          const name = file.name.toLowerCase();
+          const isImg = (file.type && file.type.startsWith("image/")) || /\.(jpe?g|png|webp|heic|heif|gif)$/i.test(name);
+          const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(name);
+
+          if (isImg) {
             const item = await processImageFile(file);
             stagedExpenseAttachments.push(item);
-          } else if (file.type === "application/pdf") {
+          } else if (isPdf) {
             const item = await processPdfFile(file);
             stagedExpenseAttachments.push(item);
           } else {
-            alert(`Unsupported file format: ${file.name}. Please upload photos (JPG, PNG) or PDF documents.`);
+            alert(`Unsupported file format: ${file.name}. Please upload photos (JPG, PNG, HEIC) or PDF documents.`);
           }
         } catch (err) {
           console.error("Error reading file:", err);
-          alert(`Failed to load ${file.name}: ${err.message}`);
+          alert(`Failed to load ${file.name}: ${err && err.message ? err.message : 'Unknown error'}`);
         }
       }
 
@@ -3279,40 +3335,66 @@
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => {
+          const rawDataUrl = e.target.result;
           const img = new Image();
           img.onload = () => {
-            const canvas = document.createElement("canvas");
-            let width = img.width;
-            let height = img.height;
-            const MAX_DIM = 1600;
-            if (width > MAX_DIM || height > MAX_DIM) {
-              if (width > height) {
-                height = Math.round((height * MAX_DIM) / width);
-                width = MAX_DIM;
-              } else {
-                width = Math.round((width * MAX_DIM) / height);
-                height = MAX_DIM;
+            try {
+              const canvas = document.createElement("canvas");
+              let width = img.width;
+              let height = img.height;
+              const MAX_DIM = 1600;
+              if (width > MAX_DIM || height > MAX_DIM) {
+                if (width > height) {
+                  height = Math.round((height * MAX_DIM) / width);
+                  width = MAX_DIM;
+                } else {
+                  width = Math.round((width * MAX_DIM) / height);
+                  height = MAX_DIM;
+                }
               }
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, width, height);
+              const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.78);
+              resolve({
+                id: "att-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+                name: file.name.replace(/\.[^/.]+$/, "") + ".jpg",
+                type: "image",
+                mimeType: "image/jpeg",
+                dataUrl: compressedDataUrl,
+                size: Math.round((compressedDataUrl.length * 3) / 4),
+                dateAdded: new Date().toISOString()
+              });
+            } catch (canvasErr) {
+              console.warn("Canvas compression failed, falling back to raw image data:", canvasErr);
+              resolve({
+                id: "att-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+                name: file.name,
+                type: "image",
+                mimeType: file.type || "image/jpeg",
+                dataUrl: rawDataUrl,
+                size: file.size,
+                dateAdded: new Date().toISOString()
+              });
             }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, width, height);
-            const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.78);
+          };
+          img.onerror = () => {
+            // Fallback for formats browser Image() cannot decode (e.g. HEIC on older iOS)
+            console.warn("Image decoding failed, saving raw file data:", file.name);
             resolve({
               id: "att-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
-              name: file.name.replace(/\.[^/.]+$/, "") + ".jpg",
+              name: file.name,
               type: "image",
-              mimeType: "image/jpeg",
-              dataUrl: compressedDataUrl,
-              size: Math.round((compressedDataUrl.length * 3) / 4),
+              mimeType: file.type || "image/jpeg",
+              dataUrl: rawDataUrl,
+              size: file.size,
               dateAdded: new Date().toISOString()
             });
           };
-          img.onerror = reject;
-          img.src = e.target.result;
+          img.src = rawDataUrl;
         };
-        reader.onerror = reject;
+        reader.onerror = (err) => reject(new Error("Could not read file: " + (err && err.message ? err.message : 'read error')));
         reader.readAsDataURL(file);
       });
     }
@@ -3365,18 +3447,18 @@
         
         const isImg = att.type === "image";
         const iconOrThumb = isImg 
-          ? `<img src="${att.dataUrl}" class="w-8 h-8 rounded object-cover border border-slate-200" alt="Receipt preview" />`
-          : `<div class="w-8 h-8 rounded bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-[10px]">PDF</div>`;
+          ? `<img src="${att.dataUrl}" onclick="previewStagedReceipt(${idx})" class="w-8 h-8 rounded object-cover border border-slate-200 cursor-pointer hover:opacity-80 transition" alt="Receipt preview" title="Click to preview" />`
+          : `<div onclick="previewStagedReceipt(${idx})" class="w-8 h-8 rounded bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-[10px] cursor-pointer hover:bg-rose-200 transition" title="Click to preview">PDF</div>`;
 
         row.innerHTML = `
           <div class="flex items-center space-x-2.5 overflow-hidden">
             ${iconOrThumb}
-            <div class="truncate max-w-[240px]">
+            <div class="truncate max-w-[220px] cursor-pointer" onclick="previewStagedReceipt(${idx})">
               <p class="font-medium text-slate-800 truncate">${att.name}</p>
               <p class="text-[10px] text-slate-400 font-mono">${formatFileSize(att.size)}</p>
             </div>
           </div>
-          <div class="flex items-center space-x-1">
+          <div class="flex items-center space-x-1 flex-shrink-0">
             <button type="button" onclick="previewStagedReceipt(${idx})" class="px-2 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded border border-slate-200 text-[11px] font-semibold transition">
               View
             </button>
@@ -3600,37 +3682,68 @@
         claim = currentVaultState.reimbursements.find(r => r.id === claimId);
       }
 
+      const desc = document.getElementById("expenseDescription").value.trim();
+      const amountVal = parseFloat(document.getElementById("expenseAmount").value);
+
+      if (!desc) {
+        alert("Please enter an expense description.");
+        document.getElementById("expenseDescription").focus();
+        return;
+      }
+      if (isNaN(amountVal) || amountVal <= 0) {
+        alert("Please enter a valid expense amount greater than 0.");
+        document.getElementById("expenseAmount").focus();
+        return;
+      }
+
       const claimData = {
         id: isEdit ? claimId : ("CLM-" + Date.now().toString().slice(-6)),
         date: document.getElementById("expenseDate").value,
-        description: document.getElementById("expenseDescription").value.trim(),
+        description: desc,
         category: document.getElementById("expenseCategory").value,
         paidBy: document.getElementById("expensePaidBy").value,
         method: document.getElementById("expenseMethod").value.trim() || "Out of Pocket",
         refNum: document.getElementById("expenseRef").value.trim(),
-        amount: parseFloat(document.getElementById("expenseAmount").value) || 0,
+        amount: amountVal,
         status: document.getElementById("expenseStatus").value,
         poaApproved: document.getElementById("expensePoaApproved").checked,
         notes: document.getElementById("expenseNotes").value.trim(),
         attachments: stagedExpenseAttachments
       };
 
-      if (isEdit && claim) {
-        if (claim.originalBillAmount !== undefined) claimData.originalBillAmount = claim.originalBillAmount;
-        if (claim.savings !== undefined) claimData.savings = claim.savings;
-        if (claim.linkedBillId !== undefined) claimData.linkedBillId = claim.linkedBillId;
-
-        const idx = currentVaultState.reimbursements.findIndex(r => r.id === claimId);
-        if (idx !== -1) {
-          currentVaultState.reimbursements[idx] = claimData;
-        }
-      } else {
-        currentVaultState.reimbursements.unshift(claimData);
+      const saveBtn = document.getElementById("saveExpenseBtn");
+      const origText = saveBtn ? saveBtn.textContent : "Save Expense";
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving...";
       }
 
-      await persistVault();
-      closeModal("addExpenseModal");
-      renderAllViews();
+      try {
+        if (isEdit && claim) {
+          if (claim.originalBillAmount !== undefined) claimData.originalBillAmount = claim.originalBillAmount;
+          if (claim.savings !== undefined) claimData.savings = claim.savings;
+          if (claim.linkedBillId !== undefined) claimData.linkedBillId = claim.linkedBillId;
+
+          const idx = currentVaultState.reimbursements.findIndex(r => r.id === claimId);
+          if (idx !== -1) {
+            currentVaultState.reimbursements[idx] = claimData;
+          }
+        } else {
+          currentVaultState.reimbursements.unshift(claimData);
+        }
+
+        await persistVault();
+        closeModal("addExpenseModal");
+        renderAllViews();
+      } catch (err) {
+        console.error("Error saving expense:", err);
+        alert("Failed to save expense: " + (err && err.message ? err.message : String(err)));
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = origText;
+        }
+      }
     }
 
     async function deleteCurrentEditExpense() {
@@ -3749,10 +3862,11 @@
       
       const win = window.open();
       if (win) {
+        const safeTitle = (att.name || "Receipt").replace(/"/g, '&quot;');
         if (att.type === "pdf") {
-          win.document.write(`<title>${att.name}</title><iframe src="${att.dataUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+          win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${safeTitle}</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0f172a}.topbar{position:fixed;top:0;left:0;right:0;height:48px;background:#1e293b;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.4)}.btn{background:#334155;color:white;border:1px solid #475569;padding:6px 12px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px}.btn:hover{background:#475569}.btn-close{background:#e11d48;border-color:#f43f5e}.title{font-size:12px;opacity:0.85;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}iframe{border:0;position:absolute;top:48px;left:0;width:100%;height:calc(100% - 48px);background:#fff}</style></head><body><div class="topbar"><button class="btn" onclick="if(window.history.length>1){window.history.back();}else{window.close();}">← Back</button><span class="title">${safeTitle}</span><button class="btn btn-close" onclick="window.close();">✕ Close</button></div><iframe src="${att.dataUrl}" allowfullscreen></iframe></body></html>`);
         } else {
-          win.document.write(`<title>${att.name}</title><body style="margin:0; background:#111; display:flex; align-items:center; justify-content:center; min-height:100vh;"><img src="${att.dataUrl}" style="max-width:100%; max-height:100vh;" /></body>`);
+          win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${safeTitle}</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>body{margin:0;background:#090d16;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;min-height:100vh}.topbar{position:fixed;top:0;left:0;right:0;height:48px;background:#1e293b;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.4)}.btn{background:#334155;color:white;border:1px solid #475569;padding:6px 12px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px}.btn:hover{background:#475569}.btn-close{background:#e11d48;border-color:#f43f5e}.title{font-size:12px;opacity:0.85;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.img-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:56px 12px 16px;box-sizing:border-box}img{max-width:100%;max-height:calc(100vh - 72px);object-fit:contain;border-radius:6px;box-shadow:0 4px 20px rgba(0,0,0,0.5)}</style></head><body><div class="topbar"><button class="btn" onclick="if(window.history.length>1){window.history.back();}else{window.close();}">← Back</button><span class="title">${safeTitle}</span><button class="btn btn-close" onclick="window.close();">✕ Close</button></div><div class="img-wrap"><img src="${att.dataUrl}" alt="Invoice" /></div></body></html>`);
         }
       }
     }
@@ -4271,8 +4385,29 @@
 
     /* ================= MODAL HELPERS ================= */
     function closeModal(modalId) {
-      document.getElementById(modalId).classList.add("hidden");
+      const el = document.getElementById(modalId);
+      if (el) el.classList.add("hidden");
     }
+
+    function handleBackdropClick(event, modalId) {
+      if (event.target && event.target.id === modalId) {
+        closeModal(modalId);
+      }
+    }
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        const viewer = document.getElementById("receiptViewerModal");
+        if (viewer && !viewer.classList.contains("hidden")) {
+          closeModal("receiptViewerModal");
+          return;
+        }
+        const expModal = document.getElementById("addExpenseModal");
+        if (expModal && !expModal.classList.contains("hidden")) {
+          closeModal("addExpenseModal");
+        }
+      }
+    });
 
     function togglePasswordVisibility(inputId) {
       const input = document.getElementById(inputId);
