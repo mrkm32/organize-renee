@@ -623,12 +623,17 @@
                     Syncs encrypted vault and receipt documents directly with your GitHub repository (<code class="text-emerald-400 font-mono">mrkm32/organize-renee</code>). Plaintext data is never stored on GitHub.
                   </p>
                 </div>
-                <div class="flex items-center space-x-2">
-                  <button onclick="openGitHubSyncModal()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold shadow-sm transition whitespace-nowrap">
-                    Configure Sync Settings
+                <div class="flex flex-wrap items-center gap-2">
+                  <button onclick="manualSyncPullFromGitHub()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow-sm transition whitespace-nowrap flex items-center">
+                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Pull from GitHub
                   </button>
-                  <button onclick="manualSyncPushToGitHub()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold transition whitespace-nowrap">
-                    Push Now
+                  <button onclick="manualSyncPushToGitHub()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold shadow-sm transition whitespace-nowrap flex items-center">
+                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    Push to GitHub
+                  </button>
+                  <button onclick="openGitHubSyncModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold transition whitespace-nowrap">
+                    Settings
                   </button>
                 </div>
               </div>
@@ -1195,14 +1200,15 @@
 
         <!-- Action buttons -->
         <div class="pt-2 flex flex-wrap gap-2 justify-between items-center border-t border-slate-100">
-          <button type="button" onclick="testGitHubConnection()" class="px-3 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium">
+          <button type="button" onclick="testGitHubConnection()" class="px-3 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium text-xs">
             Test Connection
           </button>
           <div class="flex space-x-2">
-            <button type="button" onclick="manualSyncPullFromGitHub()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-semibold transition">
+            <button type="button" onclick="manualSyncPullFromGitHub()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-xs transition shadow-sm flex items-center">
+              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               Pull from GitHub
             </button>
-            <button type="button" onclick="saveGitHubSyncSettingsAndPush()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold transition shadow-sm">
+            <button type="button" onclick="saveGitHubSyncSettingsAndPush()" class="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-semibold text-xs transition shadow-sm">
               Save & Push Now
             </button>
           </div>
@@ -1920,6 +1926,60 @@
       }
     }
 
+    // Robust helper to fetch remote vault file regardless of file size
+    async function fetchRemoteVaultText(cfg) {
+      if (!cfg) cfg = getGitHubSyncConfig();
+      let fileText = null;
+
+      // 1. If GitHub token is configured, use authenticated GitHub API with Accept: application/vnd.github.v3.raw
+      // Note: GitHub Contents API returns content: "" (empty) for files > 1 MB if requested as JSON!
+      // Requesting with vnd.github.v3.raw streams the full raw file directly.
+      if (cfg.token && cfg.repo && cfg.path) {
+        try {
+          const res = await fetch(`https://api.github.com/repos/${cfg.repo}/contents/${cfg.path}?ref=${cfg.branch}&t=${Date.now()}`, {
+            headers: {
+              "Authorization": `Bearer ${cfg.token}`,
+              "Accept": "application/vnd.github.v3.raw"
+            }
+          });
+          if (res.ok) {
+            fileText = await res.text();
+          } else {
+            console.warn("GitHub API raw fetch returned HTTP " + res.status);
+          }
+        } catch (apiErr) {
+          console.warn("GitHub API raw fetch error:", apiErr);
+        }
+      }
+
+      // 2. Direct raw githubusercontent URL (for public repos or unauthenticated fallback)
+      if (!fileText && cfg.repo && cfg.branch && cfg.path) {
+        try {
+          const rawUrl = `https://raw.githubusercontent.com/${cfg.repo}/${cfg.branch}/${cfg.path}?t=${Date.now()}`;
+          const res = await fetch(rawUrl, { cache: "no-store" });
+          if (res.ok) {
+            fileText = await res.text();
+          }
+        } catch (rawErr) {
+          console.warn("Raw GitHub URL fetch error:", rawErr);
+        }
+      }
+
+      // 3. Relative local file fetch (./vault.json) when hosted on GitHub Pages or local HTTP server
+      if (!fileText) {
+        try {
+          const localRes = await fetch(`./${cfg.path || 'vault.json'}?t=${Date.now()}`, { cache: "no-store" });
+          if (localRes.ok) {
+            fileText = await localRes.text();
+          }
+        } catch (localErr) {
+          console.warn("Local relative vault fetch error:", localErr);
+        }
+      }
+
+      return fileText;
+    }
+
     async function pushVaultToGitHub(silent = false) {
       const cfg = getGitHubSyncConfig();
       if (!cfg.token || !currentVaultState || !window.masterPassphraseCache) {
@@ -1928,9 +1988,24 @@
       }
 
       const msg = document.getElementById("ghSyncDetailMsg");
-      if (msg) msg.innerHTML = '<span class="text-amber-600">Encrypting and pushing to GitHub...</span>';
+      if (msg) msg.innerHTML = '<span class="text-amber-600">Checking remote vault and encrypting...</span>';
 
       try {
+        // SAFETY: Fetch remote vault first to merge any changes from another device so nothing is clobbered!
+        try {
+          const remoteRawText = await fetchRemoteVaultText(cfg);
+          if (remoteRawText) {
+            const remotePayload = JSON.parse(remoteRawText);
+            const remoteDecrypted = await decryptPayload(remotePayload, window.masterPassphraseCache);
+            if (remoteDecrypted) {
+              currentVaultState = mergeVaultStates(currentVaultState, remoteDecrypted);
+              renderAllViews();
+            }
+          }
+        } catch (mergeErr) {
+          console.warn("Pre-push remote merge skipped:", mergeErr);
+        }
+
         const encrypted = await encryptState(currentVaultState, window.masterPassphraseCache);
         const jsonStr = JSON.stringify(encrypted, null, 2);
         // Base64 encode UTF-8 string safely for GitHub Contents API without stack limits
@@ -1974,7 +2049,8 @@
         if (putRes.ok) {
           cfg.lastSynced = new Date().toISOString();
           saveGitHubSyncConfig(cfg);
-          if (msg) msg.innerHTML = '<span class="text-emerald-700 font-semibold">✓ Successfully pushed encrypted vault to GitHub!</span>';
+          await idbSetVault(encrypted);
+          if (msg) msg.innerHTML = '<span class="text-emerald-700 font-semibold">✓ Successfully pushed and synced with GitHub!</span>';
           if (!silent) {
             alert("✓ Successfully pushed encrypted vault & receipts to GitHub!");
             closeModal("gitHubSyncModal");
@@ -2009,40 +2085,22 @@
       if (msg) msg.innerHTML = '<span class="text-amber-600">Fetching latest vault from GitHub...</span>';
 
       try {
-        let fileContent = null;
-        if (cfg.token) {
-          const res = await fetch(`https://api.github.com/repos/${cfg.repo}/contents/${cfg.path}?ref=${cfg.branch}&t=${Date.now()}`, {
-            headers: {
-              "Authorization": `Bearer ${cfg.token}`,
-              "Accept": "application/vnd.github.v3+json"
-            }
-          });
-          if (res.ok) {
-            const data = await res.json();
-            fileContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ""))));
-          }
-        }
-        if (!fileContent) {
-          const rawUrl = `https://raw.githubusercontent.com/${cfg.repo}/${cfg.branch}/${cfg.path}?t=${Date.now()}`;
-          const res = await fetch(rawUrl);
-          if (res.ok) {
-            fileContent = await res.text();
-          } else {
-            const localRes = await fetch(`./${cfg.path}?t=${Date.now()}`);
-            if (localRes.ok) fileContent = await localRes.text();
-          }
-        }
+        const fileContent = await fetchRemoteVaultText(cfg);
 
         if (!fileContent) {
           if (msg) msg.innerHTML = '<span class="text-rose-600">Could not retrieve remote vault file from GitHub.</span>';
-          alert("Could not find remote vault.json on GitHub.");
+          alert("Could not find remote vault.json on GitHub. Check your connection or GitHub token.");
           return;
         }
 
         const payload = JSON.parse(fileContent);
         if (!window.masterPassphraseCache) {
           await idbSetVault(payload);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+          try {
+            if (fileContent.length < 4.5 * 1024 * 1024) {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            }
+          } catch (e) {}
           cfg.lastSynced = new Date().toISOString();
           saveGitHubSyncConfig(cfg);
           alert("Remote vault downloaded! Please unlock to view updated entries.");
@@ -2051,15 +2109,16 @@
         }
 
         const remoteDecrypted = await decryptPayload(payload, window.masterPassphraseCache);
-        if (confirm(`Remote vault retrieved (Last updated: ${remoteDecrypted.meta ? remoteDecrypted.meta.lastUpdated : 'Unknown'}). Merge with your local entries now?`)) {
-          currentVaultState = mergeVaultStates(currentVaultState, remoteDecrypted);
-          await persistVault(true);
-          cfg.lastSynced = new Date().toISOString();
-          saveGitHubSyncConfig(cfg);
-          renderAllViews();
-          alert("Vault merged and updated from GitHub!");
-          closeModal("gitHubSyncModal");
-        }
+        const remoteTime = remoteDecrypted.meta?.lastUpdated ? new Date(remoteDecrypted.meta.lastUpdated).toLocaleString() : 'Unknown';
+
+        currentVaultState = mergeVaultStates(currentVaultState, remoteDecrypted);
+        await persistVault(true, false);
+        cfg.lastSynced = new Date().toISOString();
+        saveGitHubSyncConfig(cfg);
+        renderAllViews();
+        if (msg) msg.innerHTML = `<span class="text-emerald-700 font-semibold">✓ Successfully updated from GitHub (${remoteTime})!</span>`;
+        alert(`✓ Successfully synced and merged with GitHub vault (Remote timestamp: ${remoteTime})!`);
+        closeModal("gitHubSyncModal");
       } catch (err) {
         console.error(err);
         if (msg) msg.innerHTML = `<span class="text-rose-600">Pull failed: ${err.message}</span>`;
@@ -2068,9 +2127,12 @@
     }
 
     // Save current decrypted state to IndexedDB (and localStorage fallback), plus auto-sync to GitHub if enabled
-    async function persistVault(skipGitHubSync = false) {
+    async function persistVault(skipGitHubSync = false, updateTimestamp = true) {
       if (!currentVaultState || !window.masterPassphraseCache) return;
-      currentVaultState.meta.lastUpdated = new Date().toISOString();
+      if (updateTimestamp) {
+        if (!currentVaultState.meta) currentVaultState.meta = {};
+        currentVaultState.meta.lastUpdated = new Date().toISOString();
+      }
       const encrypted = await encryptState(currentVaultState, window.masterPassphraseCache);
       const jsonStr = JSON.stringify(encrypted);
 
@@ -2146,13 +2208,17 @@
             // Claim exists in older/local state but missing in remote: PRESERVE IT!
             merged.reimbursements.push(oldClaim);
           } else {
-            // Claim exists in both: merge receipts/attachments if older has them and newer does not
+            // Claim exists in both: merge receipts/attachments so no receipts are lost
             const currentClaim = merged.reimbursements[idx];
             const currentReceipts = currentClaim.attachments || currentClaim.receipts || [];
             const oldReceipts = oldClaim.attachments || oldClaim.receipts || [];
-            if (currentReceipts.length === 0 && oldReceipts.length > 0) {
-              merged.reimbursements[idx].attachments = oldReceipts;
-            }
+            const attMap = new Map();
+            currentReceipts.forEach(a => attMap.set(a.id || a.name || JSON.stringify(a), a));
+            oldReceipts.forEach(a => {
+              const k = a.id || a.name || JSON.stringify(a);
+              if (!attMap.has(k)) attMap.set(k, a);
+            });
+            merged.reimbursements[idx].attachments = Array.from(attMap.values());
           }
         });
       }
@@ -2216,23 +2282,7 @@
       let remotePayload = null;
       try {
         const ghCfg = getGitHubSyncConfig();
-        let fileText = null;
-        if (ghCfg.token) {
-          const ghRes = await fetch(`https://api.github.com/repos/${ghCfg.repo}/contents/${ghCfg.path}?ref=${ghCfg.branch}&t=${Date.now()}`, {
-            headers: {
-              "Authorization": `Bearer ${ghCfg.token}`,
-              "Accept": "application/vnd.github.v3+json"
-            }
-          });
-          if (ghRes.ok) {
-            const ghData = await ghRes.json();
-            fileText = decodeURIComponent(escape(atob(ghData.content.replace(/\s/g, ""))));
-          }
-        }
-        if (!fileText) {
-          const fetchRes = await fetch(`./vault.json?t=${Date.now()}`);
-          if (fetchRes.ok) fileText = await fetchRes.text();
-        }
+        const fileText = await fetchRemoteVaultText(ghCfg);
         if (fileText) {
           remotePayload = JSON.parse(fileText);
         }
@@ -2298,7 +2348,7 @@
 
         // Ensure saved to IndexedDB and mirror to localStorage in background without blocking unlock
         try {
-          await persistVault(true);
+          await persistVault(true, false);
         } catch (cacheErr) {
           console.warn("Could not cache decrypted vault locally:", cacheErr);
         }
