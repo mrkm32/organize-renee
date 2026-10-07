@@ -1980,13 +1980,17 @@
       return fileText;
     }
 
+    let isPushingToGitHub = false;
+
     async function pushVaultToGitHub(silent = false) {
+      if (isPushingToGitHub) return false;
       const cfg = getGitHubSyncConfig();
       if (!cfg.token || !currentVaultState || !window.masterPassphraseCache) {
         if (!silent) alert("Please configure your GitHub token and unlock the vault before syncing.");
         return false;
       }
 
+      isPushingToGitHub = true;
       const msg = document.getElementById("ghSyncDetailMsg");
       if (msg) msg.innerHTML = '<span class="text-amber-600">Checking remote vault and encrypting...</span>';
 
@@ -2067,6 +2071,8 @@
         if (msg) msg.innerHTML = `<span class="text-rose-600 font-semibold">✗ Error: ${err.message}</span>`;
         if (!silent) alert(`GitHub push error: ${err.message}`);
         return false;
+      } finally {
+        isPushingToGitHub = false;
       }
     }
 
@@ -2126,6 +2132,8 @@
       }
     }
 
+    let autoSyncTimer = null;
+
     // Save current decrypted state to IndexedDB (and localStorage fallback), plus auto-sync to GitHub if enabled
     async function persistVault(skipGitHubSync = false, updateTimestamp = true) {
       if (!currentVaultState || !window.masterPassphraseCache) return;
@@ -2148,11 +2156,14 @@
         console.warn("localStorage quota exceeded, safely stored in IndexedDB:", lsErr);
       }
 
-      // 3. Auto-sync to GitHub in background if configured
+      // 3. Auto-sync to GitHub in background if configured (debounced by 3 seconds)
       if (!skipGitHubSync) {
         const cfg = getGitHubSyncConfig();
         if (cfg.token && cfg.autoSync) {
-          pushVaultToGitHub(true).catch(e => console.warn("GitHub background push failed:", e));
+          if (autoSyncTimer) clearTimeout(autoSyncTimer);
+          autoSyncTimer = setTimeout(() => {
+            pushVaultToGitHub(true).catch(e => console.warn("GitHub background push failed:", e));
+          }, 3000);
         }
       }
     }
@@ -2586,8 +2597,6 @@
 
       // Sync bills with action items
       syncBillsToActionItems();
-
-      if (typeof persistVault === "function") persistVault();
 
       renderDashboard();
       renderDashboardTopActionItems();
